@@ -1,0 +1,73 @@
+.page-title-span{
+  margin-left:  20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+
+/* Login section */
+.login-cover{
+background: #ffffff;
+position: fixed;
+top: 0px;
+left: 0px;
+width: 100%;
+height: 100vh;
+z-index: 800;
+display: flex;
+justify-content: center;
+align-items: center;
+
+}
+
+
+
+#loginDialogTitle{
+  font-family: 'Poppins', sans-serif;
+
+}
+#loginDialog{
+  font-family: 'Poppins', sans-serif;
+}
+#signInButton{
+  font-family: 'Poppins', sans-serif;
+}
+
+#loginEmail{
+  font-family: 'Poppins', sans-serif;
+
+}
+
+#registerDialogTitle{
+  font-family: 'Poppins', sans-serif;
+
+}
+#registerDialog{
+  font-family: 'Poppins', sans-serif;
+}
+#registerButton{
+  font-family: 'Poppins', sans-serif;
+}
+
+#registerEmail{
+  font-family: 'Poppins', sans-serif;
+
+}
+
+
+
+
+/*Progress bar*/
+#loginProgress{
+  display: none;
+}
+
+#registerProgress{
+  display : none;
+}
+
+#loginError{
+  display : none;
+}
+#registerError{
+  display : none;
+}
