@@ -16,6 +16,16 @@ firebase.auth().onAuthStateChanged(function(user) {
     
     document.getElementById('loginEmail').value = "";
     document.getElementById('loginPassword').value = "";
+    var dialog = document.querySelector('#loginDialog');
+                      var registerDialog = document.querySelector('#registerDialog');
+
+                      if (!dialog.showModal) {
+                        dialogPolyfill.registerDialog(dialog);
+
+                    }
+                    
+                    dialog.close();
+                    registerDialog.close();
 
 
     var userRef = db.collection('partners').doc(user.uid);
@@ -52,16 +62,9 @@ firebase.auth().onAuthStateChanged(function(user) {
                     if(isVerified){
 
                       console.log("Account is verified",isVerified)
+                      setUpData()
 
-                      var dialog = document.querySelector('#loginDialog');
-                      var registerDialog = document.querySelector('#registerDialog');
-
-                      if (!dialog.showModal) {
-                        dialogPolyfill.registerDialog(dialog);
-
-                        dialog.close();
-                        registerDialog.close();
-                    }
+                      
                   } else {
                    
                     firebase.auth().signOut();
@@ -227,11 +230,8 @@ $("#registerRegisterButton").click(
 
                 }).catch(function(error) {
                   console.log("Verfication email not sent")
-                 
-                  
+                
                 });
-
-            
 
                 document.getElementById('registerEmail').value = "";
                 document.getElementById('registerPassword').value = "";
@@ -272,9 +272,35 @@ $("#registerRegisterButton").click(
   }
 );
 
+function setUpData(){
+  var user = firebase.auth().currentUser
+  var userName = ""
+  var userId = user.uid
+
+  
+
+  var userRef = db.collection('partners').doc(user.uid);
+  return userRef
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        userName = doc.get("name")
+      }
+
+    $("#partnerName").text(userName)
+      console.log (userName, userId)
+      
+})
+
+
+}
+
+
+
 
 
 
 
   
+
 
