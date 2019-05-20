@@ -10,55 +10,68 @@ firebase.auth().onAuthStateChanged(function(user) {
     $("#signInButton").show();
     $("#registerButton").show();
 
+    
+
     var user = firebase.auth().currentUser;
     
-
-    if(user.EmailVerified == false){
-
-      alert ("Please verify your email and log back in")
-      
-      firebase.auth().signOut();
-      console.log("Email not verfied, logged out")
-    } 
-
-   /* var userDoc = db.collection("partners").document(user.uid);
-
-    userDoc.get().then(function(doc) {
-
-      if (doc.exists) {
-          console.log("Got user document");
-          //if(!userDoc.data.isVerified){
-              
-           // firebase.auth().signOut();
-           //console.log("Account not verfied, logged out")
-          }
-          
-/*
-      } else {
-
-          firebase.auth().signOut();
-          console.log("No such document!, logged out");
-      }
-  }).catch(function(error) {
-      console.log("Error getting document:", error);
-  });*/
-
-    
-
-
     document.getElementById('loginEmail').value = "";
     document.getElementById('loginPassword').value = "";
-    
-  var dialog = document.querySelector('#loginDialog');
-  var registerDialog = document.querySelector('#registerDialog');
 
-  if (!dialog.showModal) {
-    dialogPolyfill.registerDialog(dialog);
-  }
 
-  dialog.close();
-  registerDialog.close();
+    var userRef = db.collection('partners').doc(user.uid);
+    return userRef
+      .get()
+      .then(doc => {
+        if (!doc.exists) {
 
+          /* CHECK IF PARTNER */
+
+          alert("Your account is not a partner account")
+          console.log('Partner Document not found');
+          firebase.auth().signOut();
+          console.log("logged out")
+          
+            } else {
+
+              console.log("Partner Document found");
+
+              /* CHECK EMAILVERIFIED */
+
+              if(!user.emailVerified){
+                console.log ("Email not verified, " + user.emailVerified)
+                alert ("Please verify your email and log back in")
+                firebase.auth().signOut();
+                
+                  } else {
+
+                    console.log("Email verified", user.emailVerified)
+
+                    var isVerified =  doc.get("isVerified")
+                
+                    /* Account verfication check */
+                    if(isVerified){
+
+                      console.log("Account is verified",isVerified)
+
+                      var dialog = document.querySelector('#loginDialog');
+                      var registerDialog = document.querySelector('#registerDialog');
+
+                      if (!dialog.showModal) {
+                        dialogPolyfill.registerDialog(dialog);
+
+                        dialog.close();
+                        registerDialog.close();
+                    }
+                  } else {
+                   
+                    firebase.auth().signOut();
+                    console.log("Account not verified, " + isVerified )
+                    alert("Your account is not verified by UglyDeals, please contact support")
+                  }
+
+                  }  
+              }
+      })
 
   } else {
 
@@ -69,9 +82,11 @@ firebase.auth().onAuthStateChanged(function(user) {
 
     if (!dialog.showModal) {
       dialogPolyfill.registerDialog(dialog);
+      
     }
-
     dialog.showModal();
+
+    
    
   }
 });
@@ -201,7 +216,7 @@ $("#registerRegisterButton").click(
 
                 user.sendEmailVerification().then(function() {
                   console.log ("Email verification sent")
-                  alert("Please verify your email and log back in")
+                
                   
                   firebase.auth().signOut().then(function() {
                     console.log("Signed out")
