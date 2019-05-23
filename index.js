@@ -62,6 +62,7 @@ firebase.auth().onAuthStateChanged(function(user) {
                     if(isVerified){
 
                       console.log("Account is verified",isVerified)
+                      
                       setUpData()
 
                       
@@ -273,27 +274,113 @@ $("#registerRegisterButton").click(
 );
 
 function setUpData(){
-  var user = firebase.auth().currentUser
-  var userName = ""
-  var userId = user.uid
 
   
 
+  var user = firebase.auth().currentUser
+  var userId = user.uid
+  var userName = "";
+  var userEmail = user.email;
+  var userTelephone = ""
+  var userLocation = ""
+  var userIsFeatured = "";
+  var userManagername = "";
+  var userManagerTelephone = "";
+  var userManagerEmail = "";
+  
   var userRef = db.collection('partners').doc(user.uid);
   return userRef
     .get()
     .then(doc => {
       if (doc.exists) {
+        try{
         userName = doc.get("name")
+        userTelephone  = doc.get("telephone")
+        userLocation  = doc.get("location")
+        userIsFeatured = doc.get("isFeatured").toString()
+        userMangerName = doc.get("managerName")
+        userMangerTelephone = doc.get("managerTelephone")
+        userManagerEmail = doc.get("managerEmail")
+ 
+      }catch(error) {
+        console.error("Could not retrieve ", error);}
+}
+
+      $("#partnerName").text(userName)
+
+
+
+      $("#profileName")[0].parentElement.MaterialTextfield.change(userName);
+      $("#profileEmail")[0].parentElement.MaterialTextfield.change(userEmail);
+      $("#profileTelephone")[0].parentElement.MaterialTextfield.change(userTelephone);
+      $("#profileLocation")[0].parentElement.MaterialTextfield.change(userLocation);
+      $("#profileFeatured")[0].parentElement.MaterialTextfield.change(userIsFeatured);
+      $("#profileManagerName")[0].parentElement.MaterialTextfield.change(userMangerName);
+      $("#profileManagerTelephone")[0].parentElement.MaterialTextfield.change(userMangerTelephone);
+      $("#profileManagerEmail")[0].parentElement.MaterialTextfield.change(userManagerEmail);
+
+
+
+    
+      
+})}
+
+$("#profileSaveButton").click(
+  function(){
+    var user = firebase.auth().currentUser
+    var userName = $("#profileName").val();
+    //var userId = user.uid
+    var userEmail = $("#profileEmail").val();
+    var userTelephone = $("#profileTelephone").val();
+    var userLocation = $("#profileLocation").val();
+    var userManagerName = $("#profileManagerName").val();
+    var userManagerTelephone = $("#profileManagerTelephone").val();
+    var userManagerEmail = $("#profileManagerEmail").val();
+
+
+  
+  var userRef = db.collection('partners').doc(user.uid);
+  return userRef
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+
+      
+      userRef.update(
+      {
+        name : userName,
+        telephone : userTelephone,
+        email : userEmail,
+        location : userLocation,
+        managerName : userManagerName,
+        managerTelephone : userManagerTelephone,
+        managerEmail : userManagerEmail
       }
 
-    $("#partnerName").text(userName)
-      console.log (userName, userId)
-      
-})
+        ).then(function() 
+        {
+        alert("Changes have been saved")
+        console.log("Document successfully written!");
+        }).catch(function(error) {
+            console.error("Error writing document: ", error);
+    });
+
+  
+   
+    }
+ }) })
 
 
-}
+
+
+
+
+
+
+
+
+
+  
 
 
 

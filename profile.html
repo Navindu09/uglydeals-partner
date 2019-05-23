@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<!--Login PAGE-->
+<!--Login Dialog-->
 
 <dialog id="loginDialog" class="mdl-dialog">
     <h4 id="loginDialogTitle" class="mdl-dialog__title"> Sign In</h4>
@@ -45,7 +45,7 @@
   <div class=" loader mdl-spinner mdl-js-spinner is-active"></div>
 </div>
 
-<!--Register Page-->
+<!--Register Dialog-->
 <dialog id="registerDialog" class="mdl-dialog">
     <h4 id="registerDialogTitle" class="mdl-dialog__title"> Register</h4>
     <div class="mdl-dialog__content">
@@ -79,6 +79,7 @@
   </dialog>
 
 
+
 <!----Main Page Conten t*/-->
   <div id="mainpage"class="mdl-layout mdl-js-layout">
     <header class="mdl-layout__header">
@@ -87,7 +88,7 @@
         <span> 
           <span id="partnerName"class="page-title-span" ></span>
           <span class ="page-title-span" > | </span>
-          <span id="optionPage" class ="page-title-span" > Home </span>
+          <span id="optionPage" class ="page-title-span" > Profile </span>
         </span>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation">
@@ -112,7 +113,78 @@
           <a id="drawerLinkProfile" class="mdl-navigation__link" href="profile.html">Profile</a>
         </nav>
     </div>
+    <div id="card" class="mdl-card-square mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">Registration</h2>
+    </div>
+    <div class="mdl-card__supporting-text">
+      <form action="#">
+    <div class="row">
+      <div class="col">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="profileName">
+            <label class="mdl-textfield__label" for="name">Name</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" disabled id="profileFeatured">
+              <label class="mdl-textfield__label" for="featured">Featured</label>
+          </div>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="email" disabled id="profileEmail">
+            <label class="mdl-textfield__label" for="email">Email</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="profileLocation">
+            <label class="mdl-textfield__label" for="Location">Location (City)</label>
+        </div>
+      </div>
+     </div>
+      <div class="row">
+       <div class="col">
+         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="tel" id="profileTelephone">
+            <label class="mdl-textfield__label" for="telephone">Telephone</label>
+        </div>
+      </div>
+       <div class="col">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="profileManagerName">
+            <label class="mdl-textfield__label" for="Manager">Manager Name</label>
+        </div>
+       </div>
+      </div>
+      <div class="row">
+       <div class="col">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="tel" id="profileManagerTelephone">
+            <label class="mdl-textfield__label" for="telephone">Manager Telephone</label>
+        </div>
+      </div>
+      <div class="col">
+       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="tel" id="profileManagerEmail">
+            <label class="mdl-textfield__label" for="telephone">Manager Email</label>
+       </div>
+      </div>
+    </div>
+     <button id = "profileSaveButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+        Save
+     </button>
+     </form>
+      </div>
+    </div>
   </div>
+  
+    
+
   
 
 

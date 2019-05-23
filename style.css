@@ -26,6 +26,28 @@ align-items: center;
 
 }
 
+.mdl-card__title{
+  background-color: rgb(255, 255, 255);
+}
+
+#card{
+ 
+ margin: auto;
+ width: 90%;
+ height: fit-content;
+}
+.row {
+
+  overflow: hidden;
+  padding: 10px;
+}
+.col {
+  float: left;
+  width: 30%;
+  
+}
+
+
 #iconHome{
   margin-right: 10px;
 }
