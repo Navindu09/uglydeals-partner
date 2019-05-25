@@ -275,7 +275,7 @@ $("#registerRegisterButton").click(
 
 function setUpData(){
 
-  
+  $("#uploadingProgress").hide();
 
   var user = firebase.auth().currentUser
   var userId = user.uid
@@ -288,9 +288,6 @@ function setUpData(){
   var userManagerTelephone = "";
   var userManagerEmail = "";
 
-  
-  $("#submitFileButton").hide();
-  
   var userRef = db.collection('partners').doc(user.uid);
   return userRef
     .get()
@@ -409,28 +406,188 @@ $("#profileSaveButton").click(
  });
 
  $("#submitFileButton").click(function (){
-   uploadFile();
+   
+  uploadFile();
+  //deleteOldLogo();
+
  });
 
  function uploadFile(){
-    // Create a root reference
-    var storageRef = firebase.storage().ref();
+  // Create a root reference
+
+      var storageRef = firebase.storage().ref('/partnerLogos/');
+      var userId = firebase.auth().currentUser.uid;
+      
+
+      var file = document.querySelector('#profileLogo').files[0];
+      var fileName  = userId + "_" +file.name;
+      var metadata = { contentType: file.type };
+
+      console.log(fileName);
+      $("#submitFileButton").hide();
+      $("#uploadingProgress").show();
+
+      var uploadTask = storageRef.child(fileName).put(file);
+
+      // Register three observers:
+      // 1. 'state_changed' observer, called any time the state changes
+      // 2. Error observer, called on failure
+      // 3. Completion observer, called on successful completion
+      uploadTask.on('state_changed', function(snapshot){
+        // Observe state change events such as progress, pause, and resume
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+        }
+      }, function(error) {
+        // Handle unsuccessful uploads
+        alert("Error uploading file: " + error)
+        console.error("Error uploading file: " + error)
+      }, function() {
+        // Handle successful uploads on complete
+        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          console.log('File available at', downloadURL);
+         
+
+          var userRef = db.collection('partners').doc(firebase.auth().currentUser.uid);
+          return userRef
+              .get()
+              .then(doc => {
+                if (doc.exists) {
+                  userRef.update(
+                    {
+                      restaurantLogo : downloadURL
+                    }
+                  ).then(function(){
+
+                      console.log("The URL has been updated on the document")
+                      alert("Upload success")
+      
+                      
+                    //If document was not written
+                  }).catch(function(error){
+                      console.error("Could not update the URL in the document ")
+                       // Create a reference to the file to delete
+                       var storageRefDel = firebase.storage().ref('/partnerLogos/' + fileName);
+  
+                       // Delete the file
+                       storageRefDel.delete().then(function() {
+                         console.log("deleted successfully")
+                       }).catch(function(error) {
+                         // Uh-oh, an error occurred!
+                  })}
+                  )
+
+                }}).catch(function(error) {
+                  console.error("Could not find the document ", error);})
+                  .then(function(){$("#uploadingProgress").hide();})
+                  //If uploading error occured
+                  .catch(function(error){
+                    console.error("Error uploading file: " + error)
+                   
+                  })    
+        });
+      });
+ 
+  }
+/*
+  function deleteOldLogo(){
     var userId = firebase.auth().currentUser.uid;
+   
 
-    var file = document.querySelector('#profileLogo').files[0];
-    var fileName  = userId + "_" +file.name;
-    var metadata = { contentType: file.type };
+    var userRef = db.collection('partners').doc(userId);
+    return userRef
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        
+         var fileUrl = doc.get("restaurantLogo")
+         var storageRef = firebase.storage().ref();
+         var fileRef = refFromUrl(fileUrl);
+         storageRef.delete(fileRef).then(function() {
+          
+          console.log("success")
+        }).catch(function(error) {
+          // Uh-oh, an error occurred!
+        });
+         
+      }
+    })
+  }
 
-    console.log(fileName);
 
-    var task = storageRef.child(fileName).put(file, metadata);
-    task
-        .then(snapshot => snapshot.ref.getDownloadURL())
-        .then(url => console.log("Upload Complete_" + url))
- }
+           
+/*
+ function uploadFile(){
+    // Create a root reference
 
+        var storageRef = firebase.storage().ref('/partnerLogos/');
+        var userId = firebase.auth().currentUser.uid;
+        var logoURL = "";
+ 
+        var file = document.querySelector('#profileLogo').files[0];
+        var fileName  = userId + "_" +file.name;
+        var metadata = { contentType: file.type };
 
+        console.log(fileName);
+        $("#submitFileButton").hide();
+        $("#uploadingProgress").show();
 
+        var task = storageRef.child(fileName).put(file, metadata);
+        task
+            .then(snapshot => snapshot.ref.getDownloadURL())
+            .then(url => logoURL = url)
+            .then(function(){
+            var userRef = db.collection('partners').doc(firebase.auth().currentUser.uid);
+            return userRef
+              .get()
+              .then(doc => {
+                if (doc.exists) {
+                  userRef.update(
+                    {
+                      restaurantLogo : logoURL
+                    }
+                  ).then(function(){
+
+                    console.log("The URL has been updated on the document")
+                    alert("The file has now been uploaded")
+                    
+                  //If document was not written
+                  }).catch(function(error){
+                    console.error("Could not update the URL in the document ")
+                     // Create a reference to the file to delete
+                     var storageRefDel = firebase.storage().ref('/partnerLogos/' + fileName);
+
+                     // Delete the file
+                     storageRefDel.delete().then(function() {
+                       console.log("deleted successfully")
+                     }).catch(function(error) {
+                       // Uh-oh, an error occurred!
+                  })
+                })}
+                //If Document could not be found
+                }).catch(function(error) {
+                  console.error("Could not find the document ", error);})})
+            
+            .then(function(){$("#uploadingProgress").hide();})
+            //If uploading error occured
+            .catch(function(error){
+              console.error("Error uploading file: " + error)
+             
+            })
+           
+            
+        
+
+             }*/
 
 
 

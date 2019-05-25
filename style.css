@@ -96,6 +96,10 @@ align-items: center;
   display: none;
 }
 
+#uploadingProgress{
+  display: none;
+}
+
 #registerProgress{
   display : none;
 }
@@ -105,4 +109,7 @@ align-items: center;
 }
 #registerError{
   display : none;
+}
+#submitFileButton{
+  display: none;
 }
