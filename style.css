@@ -26,6 +26,10 @@ align-items: center;
 
 }
 
+#submitFileButton{
+  margin: 10px;
+}
+
 .mdl-card__title{
   background-color: rgb(255, 255, 255);
 }

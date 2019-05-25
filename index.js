@@ -287,6 +287,9 @@ function setUpData(){
   var userManagername = "";
   var userManagerTelephone = "";
   var userManagerEmail = "";
+
+  
+  $("#submitFileButton").hide();
   
   var userRef = db.collection('partners').doc(user.uid);
   return userRef
@@ -304,9 +307,12 @@ function setUpData(){
  
       }catch(error) {
         console.error("Could not retrieve ", error);}
-}
+      }
 
       $("#partnerName").text(userName)
+
+      
+      
 
 
 
@@ -318,6 +324,30 @@ function setUpData(){
       $("#profileManagerName")[0].parentElement.MaterialTextfield.change(userMangerName);
       $("#profileManagerTelephone")[0].parentElement.MaterialTextfield.change(userMangerTelephone);
       $("#profileManagerEmail")[0].parentElement.MaterialTextfield.change(userManagerEmail);
+
+      var btn = document.getElementById('profileSaveButton'); 
+      btn.disabled = false; 
+
+
+
+       const realFileButton = document.getElementById("profileLogo");
+       const customButton = document.getElementById("chooseFileButton");
+       const customText = document.getElementById("fileText");
+
+       customButton.addEventListener("click",function(){
+         realFileButton.click();
+       });
+
+       realFileButton.addEventListener("change", function(){
+          if(realFileButton.value){
+            customText.innerHTML = realFileButton.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
+          } else {
+            customText.innterHTML = "No file chosen yet";
+          }
+       });
+
+
+      
 
 
 
@@ -368,7 +398,36 @@ $("#profileSaveButton").click(
   
    
     }
- }) })
+ }) });
+
+
+
+ $("#profileLogo").on("change", function(event){
+
+  $("#submitFileButton").show();
+
+ });
+
+ $("#submitFileButton").click(function (){
+   uploadFile();
+ });
+
+ function uploadFile(){
+    // Create a root reference
+    var storageRef = firebase.storage().ref();
+    var userId = firebase.auth().currentUser.uid;
+
+    var file = document.querySelector('#profileLogo').files[0];
+    var fileName  = userId + "_" +file.name;
+    var metadata = { contentType: file.type };
+
+    console.log(fileName);
+
+    var task = storageRef.child(fileName).put(file, metadata);
+    task
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => console.log("Upload Complete_" + url))
+ }
 
 
 

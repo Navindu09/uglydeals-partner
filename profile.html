@@ -86,7 +86,7 @@
       <div class="mdl-layout-icon"></div>
       <div class="mdl-layout__header-row">
         <span> 
-          <span id="partnerName"class="page-title-span" ></span>
+          <span id="partnerName" class="page-title-span" ></span>
           <span class ="page-title-span" > | </span>
           <span id="optionPage" class ="page-title-span" > Profile </span>
         </span>
@@ -132,6 +132,21 @@
               <label class="mdl-textfield__label" for="featured">Featured</label>
           </div>
         </div>
+      <div class="col">
+        <div>
+          <span>
+            <input type="file" id="profileLogo" hidden="hidden">
+            <button id = "chooseFileButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+              Choose file
+            </button>
+           <span id="fileText">No file chosen</span>
+           <span><button id = "submitFileButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+              Submit
+            </button></span>
+           
+          </span>
+        </div>
+      </div>
     </div>
     <div class="row">
       <div class="col">
@@ -175,7 +190,8 @@
        </div>
       </div>
     </div>
-     <button id = "profileSaveButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+   
+     <button id = "profileSaveButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" disabled>
         Save
      </button>
      </form>
