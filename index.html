@@ -112,8 +112,50 @@
           <a id="drawerLinkProfile" class="mdl-navigation__link" href="profile.html">Profile</a>
         </nav>
     </div>
+   <main> 
+    <button id = "addDealButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+     Add a Deal 
+  </button> </main>
   </div>
+
+  <!--Add a deal Form-->
+  <dialog id="addDealForm" class="mdl-dialog">
+      <h4 id="loginDialogTitle" class="mdl-dialog__title"> Add a Deal</h4>
+      <div class="mdl-dialog__content">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="dealName">
+              <label class="mdl-textfield__label" for="sample3">Deal Name</label>
+            </div>
+        
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="datetime" id="dealValidFrom">
+                <label class="mdl-textfield__label" for="sample3">Valid from</label>
+            </div> 
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="datetime" id="dealValidTill">
+                <label class="mdl-textfield__label" for="sample3">Valid till</label>
+            </div> 
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="dealDescription">
+                <label class="mdl-textfield__label" for="sample3">Description</label>
+            </div> 
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="dealTerms">
+                <label class="mdl-textfield__label" for="sample3">Terms of use</label>
+            </div> 
+              <!--<p id="loginError"></p>-->
+            
+              
+      </div>
+      <div class="mdl-dialog__actions">
+          <button id="signInButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+              Proceed
+            </button>
+      <div id="loginProgress" class="mdl-spinner mdl-js-spinner is-active"></div>
+      </div>
+    </dialog>
   
+ 
 
 
   <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase.js"></script>

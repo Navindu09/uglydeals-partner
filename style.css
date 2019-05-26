@@ -88,6 +88,22 @@ align-items: center;
 
 }
 
+#addDealButton{
+  display: block;
+  max-width: 300px;
+  margin: auto;
+  margin-top: 100px
+}
+#addDealForm{
+
+ width: 1000px;
+}
+
+input[type=text] {
+  width: 300px;
+ 
+}
+
 
 
 
