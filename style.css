@@ -113,3 +113,9 @@ align-items: center;
 #submitFileButton{
   display: none;
 }
+
+#logoImage{
+
+    max-width: auto;
+    max-height: auto;
+}

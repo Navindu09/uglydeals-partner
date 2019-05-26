@@ -277,6 +277,8 @@ function setUpData(){
 
   $("#uploadingProgress").hide();
 
+
+
   var user = firebase.auth().currentUser
   var userId = user.uid
   var userName = "";
@@ -287,6 +289,7 @@ function setUpData(){
   var userManagername = "";
   var userManagerTelephone = "";
   var userManagerEmail = "";
+  var logoURL = "";
 
   var userRef = db.collection('partners').doc(user.uid);
   return userRef
@@ -301,12 +304,15 @@ function setUpData(){
         userMangerName = doc.get("managerName")
         userMangerTelephone = doc.get("managerTelephone")
         userManagerEmail = doc.get("managerEmail")
+        logoURL = doc.get("restaurantLogo")
  
       }catch(error) {
         console.error("Could not retrieve ", error);}
       }
 
       $("#partnerName").text(userName)
+      var logoImage = document.getElementById('logoImage');
+      logoImage.src = logoURL
 
       
       
@@ -407,25 +413,29 @@ $("#profileSaveButton").click(
 
  $("#submitFileButton").click(function (){
    
-  uploadFile();
-  //deleteOldLogo();
+  deleteOldLogo();
+  uploadFile(); 
+  
 
  });
 
  function uploadFile(){
   // Create a root reference
 
-      var storageRef = firebase.storage().ref('/partnerLogos/');
+      
       var userId = firebase.auth().currentUser.uid;
+      var storageRef = firebase.storage().ref("/"+userId+"/");
       
 
       var file = document.querySelector('#profileLogo').files[0];
-      var fileName  = userId + "_" +file.name;
+      var fileName  = file.name;
       var metadata = { contentType: file.type };
 
       console.log(fileName);
       $("#submitFileButton").hide();
       $("#uploadingProgress").show();
+      $("#profileSaveButton").hide();
+      $("#chooseFileButton").hide();
 
       var uploadTask = storageRef.child(fileName).put(file);
 
@@ -464,12 +474,14 @@ $("#profileSaveButton").click(
                 if (doc.exists) {
                   userRef.update(
                     {
-                      restaurantLogo : downloadURL
+                      restaurantLogo : downloadURL,
+                      logoFilePath: userId + "/" + fileName
                     }
                   ).then(function(){
 
                       console.log("The URL has been updated on the document")
                       alert("Upload success")
+                      document.location.reload()
       
                       
                     //If document was not written
@@ -498,7 +510,7 @@ $("#profileSaveButton").click(
       });
  
   }
-/*
+
   function deleteOldLogo(){
     var userId = firebase.auth().currentUser.uid;
    
@@ -509,14 +521,15 @@ $("#profileSaveButton").click(
     .then(doc => {
       if (doc.exists) {
         
-         var fileUrl = doc.get("restaurantLogo")
-         var storageRef = firebase.storage().ref();
-         var fileRef = refFromUrl(fileUrl);
-         storageRef.delete(fileRef).then(function() {
-          
-          console.log("success")
+       
+         var filePath = doc.get("logoFilePath")
+         var storageRef = firebase.storage().ref(filePath);
+         
+         storageRef.delete().then(function() {
+         
+          console.log("Delete success")
         }).catch(function(error) {
-          // Uh-oh, an error occurred!
+          console.log("error deleting")
         });
          
       }
