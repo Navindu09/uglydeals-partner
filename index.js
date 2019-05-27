@@ -359,38 +359,68 @@ function setUpData(){
 
       }})
 
-    
   }
-
-  
   );
 
   ///////////////////////
-  function readURL(input) {
-    if (input.files && input.files[0]) {
+function readURL(input) {
+  if (input.files && input.files[0]) {
         var reader = new FileReader();
         
         reader.onload = function (e) {
             $('#dealImage').attr('src', e.target.result);
+            $('#previewImage').attr('src', e.target.result);
         }
         reader.readAsDataURL(input.files[0]);
-    }
+  }
 }
+///////////////////////
 $("#dealPhoto").change(function(){
     readURL(this);
 });
 
+//////////////////////
 $("#addDealPreviewButton").click(function() {
 
-  var dialog = document.querySelector('#dealPreviewCard');
+  var userId = firebase.auth().currentUser.uid;
+  var dealIsFeatured = false;
+  var dealPartnerName = "";
+  var dealName = $("#dealName").val();
 
-    if (!dialog.showModal) {
-      dialogPolyfill.registerDialog(dialog);
+  var userRef = db.collection('partners').doc(userId);
+  return userRef
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+
+        dealIsFeatured = doc.get("isFeatured");
+        dealPartnerName = doc.get("name");
+
+      $("#previewPartnerName").text(dealPartnerName);
+      $("#previewName").text(dealName);
+
+        //console.log("featured: " + dealIsFeatured + ", " + dealPartnerName)
+
+        var dialog = document.querySelector('#dealPreviewCard');
+
+        if (!dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+          
+        }
+        dialog.showModal();
+       }else {
+        alert("Oops something went wrong")
+      }
+    })
+
       
-    }
-    dialog.showModal();
+
+
+
+  
 
 })
+
 
 
 
