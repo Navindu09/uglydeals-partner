@@ -272,7 +272,8 @@ firebase.auth().onAuthStateChanged(function(user) {
   
     }
   );
-  
+
+   ///////////////////////////////
   function setUpData(){
   
     $("#uploadingProgress").hide();
@@ -357,7 +358,8 @@ firebase.auth().onAuthStateChanged(function(user) {
       
         
   })}
-  
+
+  ///////////////////////////////
   $("#profileSaveButton").click(
     function(){
       var user = firebase.auth().currentUser
@@ -395,7 +397,7 @@ firebase.auth().onAuthStateChanged(function(user) {
           alert("Changes have been saved")
           console.log("Document successfully written!");
           }).catch(function(error) {
-              console.error("Error writing document: ", error);
+          console.error("Error writing document: ", error);
       });
   
     
@@ -404,7 +406,7 @@ firebase.auth().onAuthStateChanged(function(user) {
    }) });
   
   
-  
+  ///////////////////////////////
    $("#profileLogo").on("change", function(event){
   
     $("#submitFileButton").show();
@@ -418,7 +420,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     
   
    });
-  
+  ///////////////////////////////
    function uploadFile(){
     // Create a root reference
   
@@ -510,7 +512,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         });
    
     }
-  
+  ///////////////////////////////
     function deleteOldLogo(){
       var userId = firebase.auth().currentUser.uid;
      

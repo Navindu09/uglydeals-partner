@@ -96,7 +96,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   }
 });
 
-
+///////////////////////////
 $("#signInButton").click(
 
   function(){
@@ -124,7 +124,7 @@ $("#signInButton").click(
 );
 
 
-
+///////////////////////////
 $("#signOutButton").click(
   function(){
     firebase.auth().signOut().then(function() {
@@ -135,6 +135,7 @@ $("#signOutButton").click(
   }
 );
 
+///////////////////////////
 //When Register button is clicked on Sign in dialog
 $("#registerButton").click(
   function(){
@@ -154,6 +155,7 @@ $("#registerButton").click(
   }
 );
 
+///////////////////////////
 //When the sign in button clicked on registration dialog
 $("#registerSignInButton").click(
   function(){
@@ -173,6 +175,7 @@ $("#registerSignInButton").click(
   }
 );
 
+///////////////////////////
 $("#registerRegisterButton").click(
   function(){
 
@@ -274,11 +277,10 @@ $("#registerRegisterButton").click(
   }
 );
 
+///////////////////////////
 function setUpData(){
 
   $("#uploadingProgress").hide();
-
-
 
   var user = firebase.auth().currentUser
   var userId = user.uid
@@ -296,55 +298,28 @@ function setUpData(){
       }
 
       $("#partnerName").text(userName)
+     
+      const realFileButton = document.getElementById("dealPhoto");
+      const customButton = document.getElementById("choosePhotoButton");
+      const customText = document.getElementById("photoText");
+
+      customButton.addEventListener("click",function(){
+        realFileButton.click();
+      });
+
+      realFileButton.addEventListener("change", function(){
+         if(realFileButton.value){
+           customText.innerHTML = realFileButton.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
+         } else {
+           customText.innterHTML = "No file chosen yet";
+         }
+      });
+
+      
 
 })}
 
-
-$("#profileSaveButton").click(
-  function(){
-    var user = firebase.auth().currentUser
-    var userName = $("#profileName").val();
-    //var userId = user.uid
-    var userEmail = $("#profileEmail").val();
-    var userTelephone = $("#profileTelephone").val();
-    var userLocation = $("#profileLocation").val();
-    var userManagerName = $("#profileManagerName").val();
-    var userManagerTelephone = $("#profileManagerTelephone").val();
-    var userManagerEmail = $("#profileManagerEmail").val();
-
-
-  
-  var userRef = db.collection('partners').doc(user.uid);
-  return userRef
-    .get()
-    .then(doc => {
-      if (doc.exists) {
-
-      
-      userRef.update(
-      {
-        name : userName,
-        telephone : userTelephone,
-        email : userEmail,
-        location : userLocation,
-        managerName : userManagerName,
-        managerTelephone : userManagerTelephone,
-        managerEmail : userManagerEmail
-      }
-
-        ).then(function() 
-        {
-        alert("Changes have been saved")
-        console.log("Document successfully written!");
-        }).catch(function(error) {
-            console.error("Error writing document: ", error);
-    });
-
-  
-   
-    }
- }) });
-
+///////////////////////////
  $("#addDealButton").click(function(){
    var dialog = document.querySelector('#addDealForm');
 
@@ -356,6 +331,67 @@ $("#profileSaveButton").click(
   dialog.showModal();
 
  })
+///////////////////////////
+ $("#addDealProceedButton").click(
+  function(){
+    var user = firebase.auth().currentUser
+    //var userName = $("#profileName").val();
+    var userId = user.uid;
+    var dealName = $("#dealName").val();
+    var dealPartnerName = "";
+    var dealValidFrom = $("#dealValidFrom").val();
+    var dealValidTill = $("#dealValidTill").val();
+    var dealDescription = $("#dealDescription").val();
+    var dealTerms = $("#dealTerms").val();
+    var dealIsFeatured = false;
+    var dealRestaurantLogo = "";
+    var isMainAd = false;
+
+     
+  var userRef = db.collection('partners').doc(user.uid);
+  return userRef
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        dealIsFeatured = doc.get("isFeatured");
+        dealPartnerName = doc.get("name");
+        dealRestaurantLogo = doc.get("restaurantLogo");
+
+      }})
+
+    
+  }
+
+  
+  );
+
+  ///////////////////////
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function (e) {
+            $('#dealImage').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+$("#dealPhoto").change(function(){
+    readURL(this);
+});
+
+$("#addDealPreviewButton").click(function() {
+
+  var dialog = document.querySelector('#dealPreviewCard');
+
+    if (!dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+      
+    }
+    dialog.showModal();
+
+})
+
 
 
 
