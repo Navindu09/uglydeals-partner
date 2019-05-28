@@ -8,6 +8,8 @@
   <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-firestore.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
   </script defer src = "https://code.getmdl.io/1.2.1/material.min.js"></sript>
 
   <link rel="stylesheet" href="style.css" />
@@ -126,15 +128,6 @@
               <input class="mdl-textfield__input" type="text" id="dealName" maxlength="25">
               <label class="mdl-textfield__label" for="sample3">Deal Name</label>
             </div>
-        
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="datetime" id="dealValidFrom">
-                <label class="mdl-textfield__label" for="sample3">Valid from</label>
-            </div> 
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="datetime" id="dealValidTill">
-                <label class="mdl-textfield__label" for="sample3">Valid till</label>
-            </div> 
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="dealDescription" maxlength="50">
                 <label class="mdl-textfield__label" for="sample3">Description</label>
@@ -143,6 +136,27 @@
                 <input class="mdl-textfield__input" type="text" id="dealTerms" maxlength="30">
                 <label class="mdl-textfield__label" for="sample3">Terms of use</label>
             </div> 
+            <div id="validFromDiv">
+                <label for="sample3">Valid from</label>
+                <input  type="date" id="dealValidFrom">
+            
+                <label id="validTillLabel" for="sample3">Valid till</label>
+                <input type="date" id="dealValidTill">
+                
+            </div> 
+            <script type="text/javascript">
+              jQuery(document).ready(function() {
+                  jQuery('#dealValidFrom').datepicker({
+                      dateFormat : 'yy-mm-dd'
+                  });
+              });
+
+              jQuery(document).ready(function() {
+                  jQuery('#dealValidTill').datepicker({
+                      dateFormat : 'yy-mm-dd'
+                  });
+              });
+              </script>
             <div>
               <span>
                 <input type="file" id="dealPhoto" hidden="hidden">
@@ -155,8 +169,7 @@
                      </button>
                 <div id="uploadingProgress"  class="mdl-spinner mdl-js-spinner is-active"></div>
                 <img id="dealImage" src="" style="width:150px;height:150px;">
-               
-              </span>
+               </span>
               </span>
               <!--<p id="loginError"></p>-->
             </div>
@@ -176,21 +189,10 @@
   <!-- Square card -->
 
   <dialog id="dealPreviewCard">
-  <div class="mdl-card mdl-shadow--4dp">
-      <div  class="mdl-card__media"><img id = "previewImage" src="" width="350" height="200" >
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
-          X
-         </button>
- 
-        
-      </div>
-      <div id = "previewName"class="mdl-card__supporting-text">
-        Buy 1 get 1 Free
-      </div>
-      <div id="previewPartnerName" class="mdl-card__supporting-text">
-      Radisson
-      </div>
-      
+    <div class="mdl-card mdl-shadow--4dp">
+      <div  class="mdl-card__media"><img id = "previewImage" src="" width="350" height="200" ></div>
+      <div id = "previewName"class="mdl-card__supporting-text"></div>
+      <div id="previewPartnerName" class="mdl-card__supporting-text"></div>
     </div>
   </dialog>
     

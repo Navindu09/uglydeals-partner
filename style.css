@@ -123,6 +123,10 @@ align-items: center;
 input[type=text] {
   width: 300px;
 }
+.mdl-textfield{
+  margin: 5px
+}
+
 
 
 /*Progress bar*/
@@ -162,6 +166,14 @@ input[type=text] {
 
 .mdl-card__media{
   background-color: #ffffff
+}
+
+#validFromDiv{
+ padding-top: 40px;
+ padding-bottom: 40px;
+}
+#validTillLabel{
+  margin-left: 30px;
 }
 
 

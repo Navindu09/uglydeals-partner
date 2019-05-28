@@ -386,7 +386,9 @@ $("#addDealPreviewButton").click(function() {
   var dealIsFeatured = false;
   var dealPartnerName = "";
   var dealName = $("#dealName").val();
-
+ 
+      
+    
   var userRef = db.collection('partners').doc(userId);
   return userRef
     .get()
@@ -399,7 +401,7 @@ $("#addDealPreviewButton").click(function() {
       $("#previewPartnerName").text(dealPartnerName);
       $("#previewName").text(dealName);
 
-        //console.log("featured: " + dealIsFeatured + ", " + dealPartnerName)
+        console.log(typeof dealValidFrom);
 
         var dialog = document.querySelector('#dealPreviewCard');
 
@@ -413,21 +415,145 @@ $("#addDealPreviewButton").click(function() {
       }
     })
 
-      
-
-
-
-  
-
 })
 
+$("#addDealProceedButton").click(function() {
 
+  var retVal = confirm("Are you sure you want to proceed and upload the deal?");
 
+  if(retVal == true){
 
-
-
+  var dealName = $("#dealName").val();
+  var dealDescription = $("#dealDescription").val();
+  var dealTerms = $("#dealTerms").val();
+  var dealValidFrom = $("#dealValidFrom").datepicker('getDate');
+  var dealValidTill = $("#dealValidTill").datepicker('getDate');
+  var dealPhoto = "";
+  var dealIsFeatured= false;
+  var dealId = "";
 
  
+  var dealPartnerId = firebase.auth().currentUser.uid;
+
+  
+  var userRef = db.collection('partners').doc(dealPartnerId);
+  return userRef
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+
+        dealIsFeatured = doc.get("isFeatured");
+
+        // Add a new document with a generated id.
+        db.collection("deals").add({
+
+        name: dealName,
+        description : dealDescription,
+        termsOfUse : dealTerms,
+        isFeatured : dealIsFeatured,
+        partnerID : dealPartnerId,
+        active : true,
+        validFrom : dealValidFrom,
+        validTill : dealValidTill,
+        dealPhoto : ""
+
+            })
+      .then(function(docRef) {
+        console.log("Deal was added written with ID: ", docRef.id);
+        dealId = docRef.id
+      })
+      .catch(function(error) {
+        console.error("Error adding Deal document: ", error);
+      });
+    }
+  })
+}})
+        
+  
+  /*var storageRef = firebase.storage().ref("/"+userId+"/");
+  
+
+  var file = document.querySelector('#dealPhoto').files[0];
+  var fileName  = file.name;
+  
+
+ // console.log(fileName);
+
+ 
+  var uploadTask = storageRef.child(fileName).put(file);
+
+  // Register three observers:
+  // 1. 'state_changed' observer, called any time the state changes
+  // 2. Error observer, called on failure
+  // 3. Completion observer, called on successful completion
+  uploadTask.on('state_changed', function(snapshot){
+    // Observe state change events such as progress, pause, and resume
+    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    console.log('Upload is ' + progress + '% done');
+    switch (snapshot.state) {
+      case firebase.storage.TaskState.PAUSED: // or 'paused'
+        console.log('Upload is paused');
+        break;
+      case firebase.storage.TaskState.RUNNING: // or 'running'
+        console.log('Upload is running');
+        break;
+    }
+  }, function(error) {
+    // Handle unsuccessful uploads
+    alert("Error uploading file: " + error)
+    console.error("Error uploading file: " + error)
+  }, function() {
+    // Handle successful uploads on complete
+    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+    uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+      console.log('File available at', downloadURL);
+     
+
+      var userRef = db.collection('partners').doc(firebase.auth().currentUser.uid);
+      return userRef
+          .get()
+          .then(doc => {
+            if (doc.exists) {
+              userRef.update(
+                {
+                  restaurantLogo : downloadURL,
+                  logoFilePath: userId + "/" + fileName
+                }
+              ).then(function(){
+
+                  console.log("The URL has been updated on the document")
+                  alert("Upload success")
+                  document.location.reload()
+  
+                  
+                //If document was not written
+              }).catch(function(error){
+                  console.error("Could not update the URL in the document ")
+                   // Create a reference to the file to delete
+                   var storageRefDel = firebase.storage().ref('/partnerLogos/' + fileName);
+
+                   // Delete the file
+                   storageRefDel.delete().then(function() {
+                     console.log("deleted successfully")
+                   }).catch(function(error) {
+                     // Uh-oh, an error occurred!
+              })}
+              )
+
+            }}).catch(function(error) {
+              console.error("Could not find the document ", error);})
+              .then(function(){$("#uploadingProgress").hide();})
+              //If uploading error occured
+              .catch(function(error){
+                console.error("Error uploading file: " + error)
+               
+              })    
+    });
+  });
+
+*/
+  
 
 
 
