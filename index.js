@@ -416,7 +416,7 @@ $("#addDealPreviewButton").click(function() {
     })
 
 })
-
+///////////////////////////////
 $("#addDealProceedButton").click(function() {
 
   var retVal = confirm("Are you sure you want to proceed and upload the deal?");
@@ -468,21 +468,26 @@ $("#addDealProceedButton").click(function() {
         dealId = docRef.id
         docRef.update({
           id : dealId
-        })})
+          
+        })
+       return docRef
+       
+      })
 
-      .then(function(){
+      //// UPLOAD FUNCTION 
+      .then(function(docRef){
         console.log("Deal added to database ");
         //alert("Your deal was added!")
 
         var userId = firebase.auth().currentUser.uid
 
-        console.log(userId);
+        //console.log(userId);
 
         var storageRef = firebase.storage().ref("/"+userId+"/");
         var file = document.querySelector('#dealPhoto').files[0];
         var fileName  = file.name;
 
-        console.log(fileName);
+        
 
         var uploadTask = storageRef.child(fileName).put(file);
 
@@ -499,27 +504,30 @@ $("#addDealProceedButton").click(function() {
               console.log('Upload is running');
               break;
           }
+         
         }, function(error) {
           // Handle unsuccessful uploads
         }, function() {
           // Handle successful uploads on complete
           // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-          uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-            console.log('File available at', downloadURL);
-           
+            uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+              
+            console.log('File available at', downloadURL)
+            console.log(fileName);
+
+            docRef.update({
+              dealPhoto : downloadURL,
+              photoFilePath : docRef.id + "/" + fileName
+                   
+            })
 
           });
+
         });
 
-
-
-
-
-
-
-
       })
-    }})
+    }
+  })
   }})
 
 
