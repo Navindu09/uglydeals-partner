@@ -431,13 +431,15 @@ $("#addDealProceedButton").click(function() {
   var dealPhoto = "";
   var dealIsFeatured= false;
   var dealId = "";
+  
 
  
   var dealPartnerId = firebase.auth().currentUser.uid;
 
   
-  var userRef = db.collection('partners').doc(dealPartnerId);
-  return userRef
+  var firebaseUser = db.collection('partners').doc(dealPartnerId);
+ 
+  return firebaseUser
     .get()
     .then(doc => {
       if (doc.exists) {
@@ -455,19 +457,73 @@ $("#addDealProceedButton").click(function() {
         active : true,
         validFrom : dealValidFrom,
         validTill : dealValidTill,
-        dealPhoto : ""
+        dealPhoto : "",
+        mainAd : false
 
-            })
-      .then(function(docRef) {
-        console.log("Deal was added written with ID: ", docRef.id);
-        dealId = docRef.id
-      })
-      .catch(function(error) {
+      }).catch(function(error) {
         console.error("Error adding Deal document: ", error);
-      });
-    }
-  })
-}})
+      })
+
+      .then(function(docRef) {
+        dealId = docRef.id
+        docRef.update({
+          id : dealId
+        })})
+
+      .then(function(){
+        console.log("Deal added to database ");
+        //alert("Your deal was added!")
+
+        var userId = firebase.auth().currentUser.uid
+
+        console.log(userId);
+
+        var storageRef = firebase.storage().ref("/"+userId+"/");
+        var file = document.querySelector('#dealPhoto').files[0];
+        var fileName  = file.name;
+
+        console.log(fileName);
+
+        var uploadTask = storageRef.child(fileName).put(file);
+
+        uploadTask.on('state_changed', function(snapshot){
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log('Upload is paused');
+              break;
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log('Upload is running');
+              break;
+          }
+        }, function(error) {
+          // Handle unsuccessful uploads
+        }, function() {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+            console.log('File available at', downloadURL);
+           
+
+          });
+        });
+
+
+
+
+
+
+
+
+      })
+    }})
+  }})
+
+
+/*
         
   
   /*var storageRef = firebase.storage().ref("/"+userId+"/");
