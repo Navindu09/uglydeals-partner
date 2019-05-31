@@ -124,12 +124,14 @@
   <dialog id="addDealForm" class="mdl-dialog">
       <h4 id="loginDialogTitle" class="mdl-dialog__title"> Add a Deal</h4>
       <div class="mdl-dialog__content">
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="dealName" maxlength="25">
-              <label class="mdl-textfield__label" for="sample3">Deal Name</label>
+        <form id = "addDeal">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"> 
+              <input class="mdl-textfield__input" required = "required" type="text" id="dealName" maxlength="25"> 
+              <label class="mdl-textfield__label" for="sample3">Deal Name</label>  
+              
             </div>
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="dealDescription" maxlength="50">
+                <input class="mdl-textfield__input" required = "required" type="text" id="dealDescription" maxlength="50">
                 <label class="mdl-textfield__label" for="sample3">Description</label>
             </div> 
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -138,12 +140,14 @@
             </div> 
             <div id="validFromDiv">
                 <label for="sample3">Valid from</label>
-                <input  type="date" id="dealValidFrom">
+                <input  type="date" required = "required" id="dealValidFrom"> *
+           
             
-                <label id="validTillLabel" for="sample3">Valid till</label>
-                <input type="date" id="dealValidTill">
+                <label id="validTillLabel"  for="sample3">Valid till</label>
+                <input type="date" required = "required" id="dealValidTill"> *
                 
             </div> 
+
             <script type="text/javascript">
               jQuery(document).ready(function() {
                   jQuery('#dealValidFrom').datepicker({
@@ -159,7 +163,7 @@
               </script>
             <div>
               <span>
-                <input type="file" id="dealPhoto" hidden="hidden">
+                <input type="file" id="dealPhoto" required = "required" hidden="hidden">
                 <button id = "choosePhotoButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
                   Choose photo
                 </button>
@@ -167,8 +171,9 @@
                <span><button id = "submitFileButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
                   Submit
                      </button>
-                <div id="uploadingProgress"  class="mdl-spinner mdl-js-spinner is-active"></div>
-                <img id="dealImage" src="" style="width:150px;height:150px;">
+               
+                <img id="dealImage" src=""  style="width:150px;height:150px;">
+                <p id="dealPhotoError"></p>
                </span>
               </span>
               <!--<p id="loginError"></p>-->
@@ -181,7 +186,9 @@
           <button id="addDealPreviewButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--color">
               Preview
           </button>
+          <div id="uploadingDealProgress"  class="mdl-spinner mdl-js-spinner is-active"></div>
       </div>
+    </form>
       </div>
     </dialog>
   

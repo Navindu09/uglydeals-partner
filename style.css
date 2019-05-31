@@ -176,5 +176,11 @@ input[type=text] {
   margin-left: 30px;
 }
 
+#uploadingDealProgress{
+  display : none;
+}
+#dealPhotoError{
+  display: none;
+}
 
 
