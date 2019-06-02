@@ -417,10 +417,17 @@ $("#addDealPreviewButton").click(function() {
 
 })
 ///////////////////////////////
-$("#addDealProceedButton").click(function() {
+$("#addDealProceedButton").click(function(ev) {
+
+  ev.preventDefault();
 
   if( (document.querySelector('#dealPhoto').files[0] != null) && ($("#dealName").val() != "") && ($("#dealDescription").val() != "")  && ($("#dealValidTill").val() != "")&& ($("#dealValidTill").val() != "")) {
     
+
+    var dealValidFrom = $("#dealValidFrom").datepicker('getDate');
+    var dealValidTill = $("#dealValidTill").datepicker('getDate');
+
+   if(dealValidFrom < dealValidTill){
     var retVal = confirm("Are you sure you want to proceed and upload the deal?");
 
     if(retVal == true){
@@ -442,6 +449,7 @@ $("#addDealProceedButton").click(function() {
       var dealPartnerId = firebase.auth().currentUser.uid;
     
       
+      //Gets the partner document
       var firebaseUser = db.collection('partners').doc(dealPartnerId);
      
       return firebaseUser
@@ -450,7 +458,7 @@ $("#addDealProceedButton").click(function() {
           if (doc.exists) {
     
             
-    
+          
           dealIsFeatured = doc.get("isFeatured");
     
             // Add a new document with a generated id.
@@ -465,20 +473,36 @@ $("#addDealProceedButton").click(function() {
             validFrom : dealValidFrom,
             validTill : dealValidTill,
             dealPhoto : "",
-            mainAd : false.
-            timeStamp = firebase.firestore.FieldValue.serverTimestamp()
+            dealTimeStamp : firebase.firestore.FieldValue.serverTimestamp(),
+            mainAd : false,
+            
     
+            //If Error adding the document
           }).catch(function(error) {
             console.error("Error adding Deal document: ", error);
+            alert("Failed to add Deal");
             return;
           })
-    
+          //Adding an ID field to the deal document
           .then(function(docRef) {
             dealId = docRef.id
             docRef.update({
               id : dealId
               
             })
+            //If adding the ID field failed, delete the whole document
+            .catch(function(error) {
+              console.error("Error updating id field to docment: ", error);
+              docRef.delete().then(function() {
+              console.log("Document successfully deleted!");
+                }).catch(function(error) {
+                    console.error("Error removing document: ", error);
+                });
+              alert("Failed to add Deal");
+              return;
+            })
+
+            
            return docRef
            
           })
@@ -517,6 +541,12 @@ $("#addDealProceedButton").click(function() {
              
             }, function(error) {
               // Handle unsuccessful uploads
+                  console.log("Error uploading file")
+                  docRef.delete().then(function() {
+                  console.log("Document successfully deleted!");
+                  }).catch(function(error) {
+                      console.error("Error removing document: ", error);
+                  });
             }, function() {
               // Handle successful uploads on complete
               // For instance, get the download URL: https://firebasestorage.googleapis.com/...
@@ -531,14 +561,37 @@ $("#addDealProceedButton").click(function() {
                   photoFilePath : docRef.id + "/" + fileName
                        
                 }).catch(function(error){
-                  console.log("Error uploading file")
+
+                  //Deleting document
+                  console.log("Error updating document")
+                  docRef.delete().then(function() {
+                  console.log("Document successfully deleted!");
+
+                  //delete the StorageFile if the document is not updated
+                  var deleteFilePath = userId + "/" + fileName;
+                  var storageDeleteRef = firebase.storage().ref(deleteFilePath);
+
+                  storageDeleteRef.delete().then(function() {
+           
+                    console.log("Deleting storage file success")
+                  }).catch(function(error) {
+                    console.log("error deleting storage file")
+                  });
+
+                  //Error Deleting document
+                  }).catch(function(error) {
+                      console.error("Error removing document: ", error);
+                  });
+                
+                  
+                   
                 }).then(function(){
 
+                  //Adding deal Successfull
                   alert("Your deal has been added!")
                   $("#uploadingDealProgress").hide();
                   document.location.reload()
-                  
-
+                
                
                 })
     
@@ -553,12 +606,19 @@ $("#addDealProceedButton").click(function() {
       console.log("Cancelled")
     }
   } else {
+    alert("Valid till must me after Valid from")
+  }
+
+  } else {
     $("#dealPhotoError").show().text("Required");
     alert("Please make sure the all the required fields are filled")
   }
  
 
   })
+
+ 
+
 
   
 
