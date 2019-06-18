@@ -38,7 +38,8 @@ align-items: center;
  
  margin: auto;
  width: 90%;
- height: fit-content;
+ height: auto;
+ 
 }
 .row {
 
@@ -136,6 +137,7 @@ input[type=text] {
 
 #uploadingProgress{
   display: none;
+  margin-top: 10px
 }
 
 #registerProgress{

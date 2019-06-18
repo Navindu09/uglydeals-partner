@@ -329,8 +329,11 @@ firebase.auth().onAuthStateChanged(function(user) {
         $("#profileManagerTelephone")[0].parentElement.MaterialTextfield.change(userMangerTelephone);
         $("#profileManagerEmail")[0].parentElement.MaterialTextfield.change(userManagerEmail);
   
-        var btn = document.getElementById('profileSaveButton'); 
-        btn.disabled = false; 
+        var saveButton = document.getElementById('profileSaveButton'); 
+        saveButton.disabled = false; 
+
+        var chooseFileButton = document.getElementById('chooseFileButton'); 
+        chooseFileButton.disabled = false; 
   
   
   
@@ -361,7 +364,19 @@ firebase.auth().onAuthStateChanged(function(user) {
 
   ///////////////////////////////
   $("#profileSaveButton").click(
+    
     function(){
+
+      $("#uploadingProgress").show();
+
+
+      var saveButton = document.getElementById('profileSaveButton'); 
+      saveButton.disabled = true;
+
+      var chooseFileButton = document.getElementById('chooseFileButton'); 
+      chooseFileButton.disabled = true;
+
+
       var user = firebase.auth().currentUser
       var userName = $("#profileName").val();
       //var userId = user.uid
@@ -396,6 +411,8 @@ firebase.auth().onAuthStateChanged(function(user) {
           {
           alert("Changes have been saved")
           console.log("Document successfully written!");
+          document.location.reload()
+          
           }).catch(function(error) {
           console.error("Error writing document: ", error);
       });
