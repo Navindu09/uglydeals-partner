@@ -421,6 +421,27 @@ $("#addDealProceedButton").click(function(ev) {
 
   ev.preventDefault();
 
+  var dialog = document.getElementById("addDealForm");
+  dialog.close();
+
+  var dialog = document.querySelector('#qrDialog');
+
+        if (!dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+          
+        }
+        dialog.showModal();
+
+        var qr = new QRious({
+          
+                element: document.getElementById('qr'),
+                size : 300,
+                value: 'Get one'
+          
+          });
+          
+/*
+
   if( (document.querySelector('#dealPhoto').files[0] != null) && ($("#dealName").val() != "") && ($("#dealDescription").val() != "")  && ($("#dealValidTill").val() != "")&& ($("#dealValidTill").val() != "")) {
     
 
@@ -612,10 +633,21 @@ $("#addDealProceedButton").click(function(ev) {
   } else {
     $("#dealPhotoError").show().text("Required");
     alert("Please make sure the all the required fields are filled")
-  }
+  }*/
  
 
   })
+  $("#downloadQRButton").click(function(){
+    
+    var canvas = document.getElementById("qr");
+    image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    var link = document.createElement('a');
+    link.download = "my-image.png";
+    link.href = image;
+    link.click();
+
+
+  });
 
  
 

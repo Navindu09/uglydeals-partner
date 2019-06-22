@@ -11,6 +11,8 @@
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
   </script defer src = "https://code.getmdl.io/1.2.1/material.min.js"></sript>
+  <script src="QRious.js"></script>
+
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -191,9 +193,18 @@
     </form>
       </div>
     </dialog>
-  
+
+<!--QR Code generator-->
+
+ <dialog id="qrDialog" class="mdl-dialog">
+  <h4 id="qrTitle" class="mdl-dialog__title"> Download and Print the code to proceed. Press Esc to quit </h4>
+  <canvas id="qr" ></canvas>
+  <button id="downloadQRButton"  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" >Download Code</button>
+  </dialog>
+
+
  <!--Deal Preview Card-->
-  <!-- Square card -->
+ <!-- Square card -->
 
   <dialog id="dealPreviewCard">
     <div class="mdl-card mdl-shadow--4dp">
