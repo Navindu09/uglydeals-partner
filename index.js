@@ -421,219 +421,316 @@ $("#addDealProceedButton").click(function(ev) {
 
   ev.preventDefault();
 
-  var dialog = document.getElementById("addDealForm");
-  dialog.close();
+ 
+  
+  var user = firebase.auth().currentUser.uid;
 
-  var dialog = document.querySelector('#qrDialog');
+  
 
-        if (!dialog.showModal) {
-          dialogPolyfill.registerDialog(dialog);
-          
-        }
-        dialog.showModal();
+      if( (document.querySelector('#dealPhoto').files[0] != null) && ($("#dealName").val() != "") && ($("#dealDescription").val() != "")  && ($("#dealValidTill").val() != "")&& ($("#dealValidTill").val() != "")) {
+        $("#addDeal :input").prop("disabled", true);
+        $("#uploadingDealProgress").show()
 
-        var qr = new QRious({
-          
-                element: document.getElementById('qr'),
-                size : 300,
-                value: 'Get one'
-          
-          });
-          
-/*
-
-  if( (document.querySelector('#dealPhoto').files[0] != null) && ($("#dealName").val() != "") && ($("#dealDescription").val() != "")  && ($("#dealValidTill").val() != "")&& ($("#dealValidTill").val() != "")) {
-    
-
-    var dealValidFrom = $("#dealValidFrom").datepicker('getDate');
-    var dealValidTill = $("#dealValidTill").datepicker('getDate');
-
-   if(dealValidFrom < dealValidTill){
-    var retVal = confirm("Are you sure you want to proceed and upload the deal?");
-
-    if(retVal == true){
-      $("#addDeal :input").prop("disabled", true);
-      $("#uploadingDealProgress").show()
-
-
-      var dealName = $("#dealName").val();
-      var dealDescription = $("#dealDescription").val();
-      var dealTerms = $("#dealTerms").val();
-      var dealValidFrom = $("#dealValidFrom").datepicker('getDate');
-      var dealValidTill = $("#dealValidTill").datepicker('getDate');
-      var dealPhoto = "";
-      var dealIsFeatured= false;
-      var dealId = "";
-      
-    
+        db.collection("partners").doc(user).collection("activeDeals").get()
+        .then(function(querySnapshot) {
      
-      var dealPartnerId = firebase.auth().currentUser.uid;
+        if(querySnapshot.size < 3){
+        var dealValidFrom = $("#dealValidFrom").datepicker('getDate');
+        var dealValidTill = $("#dealValidTill").datepicker('getDate');
     
-      
-      //Gets the partner document
-      var firebaseUser = db.collection('partners').doc(dealPartnerId);
-     
-      return firebaseUser
-        .get()
-        .then(doc => {
-          if (doc.exists) {
+       if(dealValidFrom < dealValidTill){
+        var retVal = confirm("Are you sure you want to proceed and upload the deal?");
     
-            
+        if(retVal == true){
           
-          dealIsFeatured = doc.get("isFeatured");
     
-            // Add a new document with a generated id.
-            db.collection("deals").add({
     
-            name: dealName,
-            description : dealDescription,
-            termsOfUse : dealTerms,
-            isFeatured : dealIsFeatured,
-            partnerID : dealPartnerId,
-            active : true,
-            validFrom : dealValidFrom,
-            validTill : dealValidTill,
-            dealPhoto : "",
-            dealTimeStamp : firebase.firestore.FieldValue.serverTimestamp(),
-            mainAd : false,
-            
-    
-            //If Error adding the document
-          }).catch(function(error) {
-            console.error("Error adding Deal document: ", error);
-            alert("Failed to add Deal");
-            return;
-          })
-          //Adding an ID field to the deal document
-          .then(function(docRef) {
-            dealId = docRef.id
-            docRef.update({
-              id : dealId
+          var dealName = $("#dealName").val();
+          var dealDescription = $("#dealDescription").val();
+          var dealTerms = $("#dealTerms").val();
+          var dealValidFrom = $("#dealValidFrom").datepicker('getDate');
+          var dealValidTill = $("#dealValidTill").datepicker('getDate');
+          var dealPhoto = "";
+          var dealIsFeatured= false;
+          var dealId = "";
+          
+        
+         
+          var dealPartnerId = firebase.auth().currentUser.uid;
+        
+          
+          //Gets the partner document
+          var firebaseUser = db.collection('partners').doc(dealPartnerId);
+         
+          return firebaseUser
+            .get()
+            .then(doc => {
+              if (doc.exists) {
+        
+                
               
-            })
-            //If adding the ID field failed, delete the whole document
-            .catch(function(error) {
-              console.error("Error updating id field to docment: ", error);
-              docRef.delete().then(function() {
-              console.log("Document successfully deleted!");
-                }).catch(function(error) {
-                    console.error("Error removing document: ", error);
-                });
-              alert("Failed to add Deal");
-              return;
-            })
-
-            
-           return docRef
-           
-          })
-    
-          //// UPLOAD FUNCTION 
-          .then(function(docRef){
-            console.log("Deal added to database ");
-            //alert("Your deal was added!")
-    
-            var userId = firebase.auth().currentUser.uid
-    
-            //console.log(userId);
-    
-          
-            var storageRef = firebase.storage().ref("/"+userId+"/");
-            var file = document.querySelector('#dealPhoto').files[0];
-            var fileName  = file.name;
-    
-            
-    
-            var uploadTask = storageRef.child(fileName).put(file);
-    
-            uploadTask.on('state_changed', function(snapshot){
-              // Observe state change events such as progress, pause, and resume
-              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-              var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              console.log('Upload is ' + progress + '% done');
-              switch (snapshot.state) {
-                case firebase.storage.TaskState.PAUSED: // or 'paused'
-                  console.log('Upload is paused');
-                  break;
-                case firebase.storage.TaskState.RUNNING: // or 'running'
-                  console.log('Upload is running');
-                  break;
-              }
-             
-            }, function(error) {
-              // Handle unsuccessful uploads
-                  console.log("Error uploading file")
-                  docRef.delete().then(function() {
-                  console.log("Document successfully deleted!");
-                  }).catch(function(error) {
-                      console.error("Error removing document: ", error);
-                  });
-            }, function() {
-              // Handle successful uploads on complete
-              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                  
-                console.log('File available at', downloadURL)
-                console.log(fileName);
-    
-                docRef.update({
-    
-                  dealPhoto : downloadURL,
-                  photoFilePath : docRef.id + "/" + fileName
-                       
-                }).catch(function(error){
-
-                  //Deleting document
-                  console.log("Error updating document")
-                  docRef.delete().then(function() {
-                  console.log("Document successfully deleted!");
-
-                  //delete the StorageFile if the document is not updated
-                  var deleteFilePath = userId + "/" + fileName;
-                  var storageDeleteRef = firebase.storage().ref(deleteFilePath);
-
-                  storageDeleteRef.delete().then(function() {
-           
-                    console.log("Deleting storage file success")
-                  }).catch(function(error) {
-                    console.log("error deleting storage file")
-                  });
-
-                  //Error Deleting document
-                  }).catch(function(error) {
-                      console.error("Error removing document: ", error);
-                  });
+                dealIsFeatured = doc.get("isFeatured");
+        
+                // Add a new document with a generated id.
+                db.collection("partners").doc(dealPartnerId).collection("activeDeals").add({
+        
+                name: dealName,
+                description : dealDescription,
+                termsOfUse : dealTerms,
+                isFeatured : dealIsFeatured,
+                partnerID : dealPartnerId,
+                active : true,
+                validFrom : dealValidFrom,
+                validTill : dealValidTill,
+                dealPhoto : "",
+                photoFilePath: "",
+                dealTimeStamp : firebase.firestore.FieldValue.serverTimestamp(),
+                mainAd : false,
                 
+        
+                            //If Error adding the document
+                            }).catch(function(error) {
+                              console.error("Error adding Deal document: ", error);
+                              alert("Failed to add Deal");
+                              return;
+                            })
+                            //Adding an ID field to the deal document
+                            .then(function(docRef) {
+                              dealId = docRef.id
+                              docRef.update({
+                                id : dealId
+                                
+                              })
                   
-                   
-                }).then(function(){
-
-                  //Adding deal Successfull
-                  alert("Your deal has been added!")
-                  $("#uploadingDealProgress").hide();
-                  document.location.reload()
+                                      //If adding the ID field failed, delete the whole document
+                                      .catch(function(error) {
+                                        console.error("Error updating id field to docment: ", error);
+                                        docRef.delete().then(function() {
+                                        console.log("Document successfully deleted!");
+                                          }).catch(function(error) {
+                                              console.error("Error removing document: ", error);
+                                          });
+                                        alert("Failed to add Deal");
+                                        return;
+                                      })
+    
                 
+               return docRef
                
-                })
+              })  //// UPLOAD FUNCTION 
+              .then(function(docRef){
     
-              });
+               
+                console.log("Deal added to database ");
+                //alert("Your deal was added!")
+        
+                var userId = firebase.auth().currentUser.uid
+        
+                //console.log(userId);
+        
+              
+                var storageRef = firebase.storage().ref("/"+userId+"/");
+                var file = document.querySelector('#dealPhoto').files[0];
+                var fileName  = file.name;
+        
+                
+        
+                var uploadTask = storageRef.child(fileName).put(file);
+        
+                uploadTask.on('state_changed', function(snapshot){
+                      // Observe state change events such as progress, pause, and resume
+                      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      console.log('Upload is ' + progress + '% done');
+                      switch (snapshot.state) {
+                        case firebase.storage.TaskState.PAUSED: // or 'paused'
+                          console.log('Upload is paused');
+                          break;
+                        case firebase.storage.TaskState.RUNNING: // or 'running'
+                          console.log('Upload is running');
+                          break;
+                      }
+                 
+                }, function(error) {
+                  // Handle unsuccessful uploads
+                      console.log("Error uploading file")
+                      docRef.delete().then(function() {
+                      console.log("Document successfully deleted!");
+                      }).catch(function(error) {
+                          console.error("Error removing document: ", error);
+                      });
+                }, function() {
+                  // Handle successful uploads on complete
+                  // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                    uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                      
+                    console.log('File available at', downloadURL)
+                    console.log(fileName);
     
-            });
+                    var userId = firebase.auth().currentUser.uid;
+        
+                    docRef.update({
+        
+                      dealPhoto : downloadURL,
+                      photoFilePath : userId + "/" + fileName
+                           
+                    })
+                    
+                          .catch(function(error){
     
-         })
+                            //Deleting document
+                            console.log("Error updating document")
+                            docRef.delete().then(function() {
+                                  console.log("Document successfully deleted!");
+          
+                                  //delete the StorageFile if the document is not updated
+                                  var deleteFilePath = userId + "/" + fileName;
+                                  var storageDeleteRef = firebase.storage().ref(deleteFilePath);
+          
+                                  storageDeleteRef.delete().then(function() {
+                              
+                                      console.log("Deleting storage file success")
+                                      }).catch(function(error) {
+                                        console.log("error deleting storage file")
+                                      });
+          
+                                      //Error Deleting document
+                                      }).catch(function(error) {
+                                          console.error("Error removing document: ", error);
+                                      });
+                  
+                          }).then(function(){
+                              
+                            docRef.get().then(function(doc) {
+                              if (doc.exists){
+                                    
+                                //console.log(doc.data());
+          
+                                    db.collection("deals").doc(doc.id).set({
+          
+                                    name: doc.get("name"),
+                                    dealPhoto : doc.get("dealPhoto"),
+                                    photoFilePath: doc.get("photoFilePath"),
+                                    description : doc.get("description"),
+                                    termsOfUse : doc.get("termsOfUse"),
+                                    isFeatured : doc.get("isFeatured"),
+                                    partnerID : doc.get("partnerID"),
+                                    active : true,
+                                    validFrom : doc.get("validFrom"),
+                                    validTill : doc.get("validTill"),
+                                    dealTimeStamp : doc.get("dealTimeStamp"),
+                                    mainAd : false,
+                                    id : doc.get("id")
+                                    
+                                  })
+                                        .catch(function(error) {
+                                          console.log("Error writing document in deal collection:", error);
+                                          console.log(docRef.id);
+                                          
+                                        }).then(function(){
+                                          console.log("Deal added successfully")
+                                          //alert("Your deal has been added!")
+                                          $("#uploadingDealProgress").hide();
+                                          
+                                          var dialog = document.getElementById("addDealForm");
+                                          dialog.close();
+          
+                                        console.log(typeof docRef);
+                                        
+                                          var dialog = document.querySelector('#qrDialog');
+                                        
+                                                if (!dialog.showModal) {
+                                                  dialogPolyfill.registerDialog(dialog);
+                                                  
+                                                }
+                                                dialog.showModal();
+                                        
+                                                var qr = new QRious({
+                                                  
+                                                        element: document.getElementById('qr'),
+                                                        size : 300,
+                                                        value: docRef.id
+                                                  
+                                                  }); 
+                                          
+                                    
+                                          });
+                                      
+                         
+                         } else {
+                             // doc.data() will be undefined in this case
+                             console.log("No such document!");
+                         }
+     
+                     
+     
+                      }).catch(function(error) {
+                       console.log("Error getting document:", error);
+                       console.log(docRef.id);
+     
+                   
+                             //Deleting document
+                             console.log("Error updating document")
+                             docRef.delete().then(function() {
+                             console.log("Document successfully deleted!");
+     
+                             //delete the StorageFile if the document is not updated
+                             var deleteFilePath = userId + "/" + fileName;
+                             var storageDeleteRef = firebase.storage().ref(deleteFilePath);
+     
+                             storageDeleteRef.delete().then(function() {
+                     
+                               console.log("Deleting storage file success")
+                             }).catch(function(error) {
+                               console.log("error deleting storage file")
+                             });
+     
+                             //Error Deleting document
+                             }).catch(function(error) {
+                                 console.error("Error removing document: ", error);
+                             });
+                      });
+     
+     
+     
+                    });
+    
+                    //return docRef; 
+                  })
+                 
+                  
+        
+                });
+        
+             })
+            }
+          })
+        } else {
+          console.log("Cancelled")
         }
-      })
-    } else {
-      console.log("Cancelled")
-    }
-  } else {
-    alert("Valid till must me after Valid from")
-  }
+      } else {
+        alert("Valid till must me after Valid from")
+      }
 
-  } else {
-    $("#dealPhotoError").show().text("Required");
-    alert("Please make sure the all the required fields are filled")
-  }*/
+    } else {
+      alert("You already have 3 deals active. Please end a deal to add a new one")
+      $("#addDeal :input").prop("disabled", false);
+      $("#uploadingDealProgress").hide()
+
+    }
+
+ });
+
+    
+      } else {
+        $("#dealPhotoError").show().text("Required");
+        alert("Please make sure the all the required fields are filled")
+      }
+       
+  
+    
+
+  
  
 
   })
@@ -642,12 +739,22 @@ $("#addDealProceedButton").click(function(ev) {
     var canvas = document.getElementById("qr");
     image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
     var link = document.createElement('a');
-    link.download = "my-image.png";
+    link.download = "qrCode.png";
     link.href = image;
     link.click();
+    document.location.reload()
 
 
   });
+
+  $("#doneButton").click(function(){
+    
+    
+    document.location.reload()
+
+
+  });
+
 
  
 

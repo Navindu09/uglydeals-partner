@@ -432,6 +432,8 @@ firebase.auth().onAuthStateChanged(function(user) {
   
    $("#submitFileButton").click(function (){
      
+    ev.preventDefault();
+
     deleteOldLogo();
     uploadFile(); 
     

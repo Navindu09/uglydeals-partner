@@ -197,9 +197,10 @@
 <!--QR Code generator-->
 
  <dialog id="qrDialog" class="mdl-dialog">
-  <h4 id="qrTitle" class="mdl-dialog__title"> Download and Print the code to proceed. Press Esc to quit </h4>
+  <h4 id="qrTitle" class="mdl-dialog__title"> Download and Print the code to proceed. Click done to finish! </h4>
   <canvas id="qr" ></canvas>
   <button id="downloadQRButton"  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" >Download Code</button>
+  <button id="doneButton"  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" > Done</button>
   </dialog>
 
 
@@ -207,7 +208,7 @@
  <!-- Square card -->
 
   <dialog id="dealPreviewCard">
-    <div class="mdl-card mdl-shadow--4dp">
+    <div id="dealCard" class="mdl-card mdl-shadow--4dp">
       <div  class="mdl-card__media"><img id = "previewImage" src="" width="350" height="200" ></div>
       <div id = "previewName"class="mdl-card__supporting-text"></div>
       <div id="previewPartnerName" class="mdl-card__supporting-text"></div>

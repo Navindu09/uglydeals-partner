@@ -4,7 +4,9 @@
   font-size: 20px;
 }
 
-
+body{
+  background: #fefefe;
+}
 /* Login section */
 .login-cover{
 background: #ffffff;
@@ -161,7 +163,7 @@ input[type=text] {
 }
 
 
-.mdl-card  {
+#dealPreviewCard  {
   width: 300px;
   height: 300px;
 }
@@ -204,5 +206,38 @@ input[type=text] {
 
 #downloadQRButton{
   margin: 50px;
+}
+
+
+
+.demo-card-square.mdl-card {
+  margin: 50px;
+  width: 260px;
+  height: 260px;
+  
+}
+
+.demo-card-square  img{
+  
+  width: 100%;
+  height: 60%;
+}
+
+
+.demo-card-square.mdl-card:hover {
+  box-shadow: 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12), 0 5px 5px -3px rgba(0, 0, 0, .2);
+}
+
+h5{
+  font-size: 0.9em;
+  margin: 0;
+  font-weight: 100em;
+  font-family: 'Poppins', sans-serif;
 
 }
+
+.content-grid{
+  -ms-transform: translateY(50%);
+  transform: translateY(50%);
+}
+
