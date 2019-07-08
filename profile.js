@@ -341,7 +341,8 @@ firebase.auth().onAuthStateChanged(function(user) {
          const customButton = document.getElementById("chooseFileButton");
          const customText = document.getElementById("fileText");
   
-         customButton.addEventListener("click",function(){
+         customButton.addEventListener("click",function(ev){
+          ev.preventDefault();
            realFileButton.click();
          });
   
@@ -430,7 +431,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   
    });
   
-   $("#submitFileButton").click(function (){
+   $("#submitFileButton").click(function (ev){
      
     ev.preventDefault();
 

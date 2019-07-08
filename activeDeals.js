@@ -277,6 +277,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     }
   );
   
+  const grid = document.querySelector("#gridDiv");
   ///////////////////////////
   function setUpData(){
       
@@ -295,6 +296,10 @@ firebase.auth().onAuthStateChanged(function(user) {
         if (doc.exists) {
           try{
           userName = doc.get("name")
+
+          $("#partnerName").show().text(userName);
+  
+
        
         }catch(error) {
           console.error("Could not retrieve ", error);}
@@ -303,414 +308,479 @@ firebase.auth().onAuthStateChanged(function(user) {
         db.collection("partners").doc(userId).collection("activeDeals").get()
         .then(function(querySnapshot) {
            
+            if(querySnapshot.size === 0){
+              $("#activeDealsTitle").show();
+            }
             //querySnapshot.get(1);
             querySnapshot.forEach(function(doc) {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(querySnapshot.size,doc.data());
-            });
-        });
-        
-
-       
-  
-        
-  
-  })}
-  
-  ///////////////////////////
-   $("#addDealButton").click(function(){
-     var dialog = document.querySelector('#addDealForm');
-  
-  
-     if (!dialog.showModal) {
-      dialogPolyfill.registerDialog(dialog);
-      
-    }
-    dialog.showModal();
-  
-   })
-  ///////////////////////////
-   $("#addDealProceedButton").click(
-    function(){
-      var user = firebase.auth().currentUser
-      //var userName = $("#profileName").val();
-      var userId = user.uid;
-      var dealName = $("#dealName").val();
-      var dealPartnerName = "";
-      var dealValidFrom = $("#dealValidFrom").val();
-      var dealValidTill = $("#dealValidTill").val();
-      var dealDescription = $("#dealDescription").val();
-      var dealTerms = $("#dealTerms").val();
-      var dealIsFeatured = false;
-      var dealRestaurantLogo = "";
-      var isMainAd = false;
-  
-       
-    var userRef = db.collection('partners').doc(user.uid);
-    return userRef
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          dealIsFeatured = doc.get("isFeatured");
-          dealPartnerName = doc.get("name");
-          dealRestaurantLogo = doc.get("restaurantLogo");
-  
-        }})
-  
-    }
-    );
-  
-    ///////////////////////
-  function readURL(input) {
-    if (input.files && input.files[0]) {
-          var reader = new FileReader();
-          
-          reader.onload = function (e) {
-              $('#dealImage').attr('src', e.target.result);
-              $('#previewImage').attr('src', e.target.result);
-          }
-          reader.readAsDataURL(input.files[0]);
-    }
-  }
-  ///////////////////////
-  $("#dealPhoto").change(function(){
-      readURL(this);
-  });
-  
-  //////////////////////
-  $("#addDealPreviewButton").click(function() {
-  
-    var userId = firebase.auth().currentUser.uid;
-    var dealIsFeatured = false;
-    var dealPartnerName = "";
-    var dealName = $("#dealName").val();
-   
-        
-      
-    var userRef = db.collection('partners').doc(userId);
-    return userRef
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-  
-          dealIsFeatured = doc.get("isFeatured");
-          dealPartnerName = doc.get("name");
-  
-        $("#previewPartnerName").text(dealPartnerName);
-        $("#previewName").text(dealName);
-  
-          console.log(typeof dealValidFrom);
-  
-          var dialog = document.querySelector('#dealPreviewCard');
-  
-          if (!dialog.showModal) {
-            dialogPolyfill.registerDialog(dialog);
+                grid.innerHTML +="<div id="+ doc.data().id +"  class='mdl-cell'> <div class='mdl-card mdl-shadow--2dp demo-card-square'> <img src=' " + doc.data().dealPhoto + "'> </img><div class='mdl-card__title mdl-card--expand'> <h5>" + doc.data().name + "</h5> </div><div class='mdl-card__actions mdl-card--border'><span><a id = 'editButton' class='mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect'>Edit</a> <a id='endButton' class='mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect'> End</a></span></div></div></div>";
+                
             
-          }
-          dialog.showModal();
-         }else {
-          alert("Oops something went wrong")
+             });
+
+        });
+
+        const realFileButton = document.getElementById("dealPhoto");
+        const customButton = document.getElementById("choosePhotoButton");
+        const customText = document.getElementById("photoText");
+  
+        customButton.addEventListener("click",function(ev){
+          ev.preventDefault();
+          realFileButton.click();
+        });
+  
+        realFileButton.addEventListener("change", function(){
+           if(realFileButton.value){
+             customText.innerHTML = realFileButton.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
+           } else {
+             customText.innterHTML = "No file chosen yet";
+           }
+        });
+ 
+  })}
+
+ 
+ 
+ //EDIT BUTTON clicked
+  $("#gridDiv").click( function(event) {
+
+    if(event.target.id == "editButton")
+    {
+      console.log(true);
+      dealId = $(event.target).parent().parent().parent().parent().attr('id');
+      console.log(dealId);
+      
+      var dialog = document.querySelector('#editDealForm');
+  
+      if (!dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+  
         }
-      })
+
+       dialog.showModal();
+       loadDealData(dealId);
+                      
+                     
+    }
   
   })
-  ///////////////////////////////
-  $("#addDealProceedButton").click(function(ev) {
+
+function loadDealData(dealId){
+
   
-    ev.preventDefault();
+
+  userId = firebase.auth().currentUser.uid;
+  var dealDoc = db.collection("partners").doc(userId).collection("activeDeals").doc(dealId)
+  dealDoc.get().then(function(doc){
+    if (doc.exists){
+      //console.log(doc.data())
+
+        $("#dealName")[0].parentElement.MaterialTextfield.change(doc.get("name"));
+        $("#dealDescription")[0].parentElement.MaterialTextfield.change(doc.get("description"));
+        $("#dealTerms")[0].parentElement.MaterialTextfield.change(doc.get("termsOfUse"));
+        $("#dealId")[0].parentElement.MaterialTextfield.change(doc.get("id"));
+
+        var timeStampValidFrom = doc.get("validFrom");
+        var validFrom = timeStampValidFrom.toDate();
+       
+        var timeStampValidTill = doc.get("validTill");
+        var validTill = timeStampValidTill.toDate();
+
+        $("#dealId").text(dealId);
+        var text = $("#dealId").text();
+        console.log();
+
+        $("#dealValidFrom").datepicker("setDate", validFrom) ;
+        $("#dealValidTill").datepicker("setDate", validTill) ; 
+
+        //$("#dealValidTill")[0].change(doc.get("validTill"));
+        $("#dealImage").attr('src', doc.get("dealPhoto"))
+        
+    } else {
+      console.log("No such deal!")
+    }
+
+  })
+
+}
+
+ $("#updateButton").click(function(){ 
+
+ var userId = firebase.auth().currentUser.uid;
+
+ document.getElementById("updateButton").disabled = true;
+ $("#uploadingDealProgress").show();
+ document.getElementById("cancelButton").disabled = true;
+ document.getElementById("choosePhotoButton").disabled = true;
+
+ var name1 = $("#dealName").val();
+ var description1 = $("#dealDescription").val();
+ var termsOfUse1 = $("#dealTerms").val();
+ var validFrom1 = $("#dealValidFrom").datepicker("getDate");
+ var validTill1 = $("#dealValidTill").datepicker("getDate");
+ var id1 = $("#dealId").val();
+ var photo = $("#dealImage").attr("src");
   
-    /*var dialog = document.getElementById("addDealForm");
-    dialog.close();
-  
-    var dialog = document.querySelector('#qrDialog');
-  
-          if (!dialog.showModal) {
-            dialogPolyfill.registerDialog(dialog);
-            
-          }
-          dialog.showModal();
-  
-          var qr = new QRious({
-            
-                  element: document.getElementById('qr'),
-                  size : 300,
-                  value: 'Get one'
-            
-            }); */
+ 
+ //Update the document with changes
+ var activeDeal = db.collection("partners").doc(userId).collection("activeDeals").doc(id1);
+ activeDeal.update({
+   name : name1,
+   description : description1,
+   termsOfUse : termsOfUse1,
+   validFrom : validFrom1,
+   validTill : validTill1,
+   lastUpdated : firebase.firestore.FieldValue.serverTimestamp()
+   
+ }).catch(function(error){
+   console.log("Updating document failed")
+ }).then(function(){
+
+    console.log("activeDeals updated")
+
+    activeDeal.get().then(function(doc){
+      if(doc.exists){
+
+        //Delete old photo
+        var activeDealPhoto = doc.get("dealPhoto")
+
+        if(!(photo === activeDealPhoto)){
+
+          var dealPhotoPath = doc.get("photoFilePath");
+
           
-  
-  
-    if( (document.querySelector('#dealPhoto').files[0] != null) && ($("#dealName").val() != "") && ($("#dealDescription").val() != "")  && ($("#dealValidTill").val() != "")&& ($("#dealValidTill").val() != "")) {
-      
-  
-      var dealValidFrom = $("#dealValidFrom").datepicker('getDate');
-      var dealValidTill = $("#dealValidTill").datepicker('getDate');
-  
-     if(dealValidFrom < dealValidTill){
-      var retVal = confirm("Are you sure you want to proceed and upload the deal?");
-  
-      if(retVal == true){
-        $("#addDeal :input").prop("disabled", true);
-        $("#uploadingDealProgress").show()
-  
-  
-        var dealName = $("#dealName").val();
-        var dealDescription = $("#dealDescription").val();
-        var dealTerms = $("#dealTerms").val();
-        var dealValidFrom = $("#dealValidFrom").datepicker('getDate');
-        var dealValidTill = $("#dealValidTill").datepicker('getDate');
-        var dealPhoto = "";
-        var dealIsFeatured= false;
-        var dealId = "";
-        
-      
-       
-        var dealPartnerId = firebase.auth().currentUser.uid;
-      
-        
-        //Gets the partner document
-        var firebaseUser = db.collection('partners').doc(dealPartnerId);
-       
-        return firebaseUser
-          .get()
-          .then(doc => {
-            if (doc.exists) {
-      
-              
+          var storageRef = firebase.storage().ref(dealPhotoPath);
+
+          // Delete the file
+          storageRef.delete().then(function() {
+            console.log("Previous file has been deleted")
+
+            var userId = firebase.auth().currentUser.uid;
+
+            var uploadFile = firebase.storage().ref("/"+userId+"/");
+            var file = document.querySelector('#dealPhoto').files[0];
+            var fileName  = file.name;
+    
             
-            dealIsFeatured = doc.get("isFeatured");
-      
-              // Add a new document with a generated id.
-              db.collection("partners").doc(dealPartnerId).collection("activeDeals").add({
-      
-              name: dealName,
-              description : dealDescription,
-              termsOfUse : dealTerms,
-              isFeatured : dealIsFeatured,
-              partnerID : dealPartnerId,
-              active : true,
-              validFrom : dealValidFrom,
-              validTill : dealValidTill,
-              dealPhoto : "",
-              dealTimeStamp : firebase.firestore.FieldValue.serverTimestamp(),
-              mainAd : false,
-              
-      
-              //If Error adding the document
-            }).catch(function(error) {
-              console.error("Error adding Deal document: ", error);
-              alert("Failed to add Deal");
-              return;
-            })
-            //Adding an ID field to the deal document
-            .then(function(docRef) {
-              dealId = docRef.id
-              docRef.update({
-                id : dealId
-                
-              })
-  
-              //If adding the ID field failed, delete the whole document
-              .catch(function(error) {
-                console.error("Error updating id field to docment: ", error);
-                docRef.delete().then(function() {
-                console.log("Document successfully deleted!");
+    
+            var uploadTask = uploadFile.child(fileName).put(file);
+    
+            uploadTask.on('state_changed', function(snapshot){
+                  // Observe state change events such as progress, pause, and resume
+                  // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                  var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                  console.log('Upload is ' + progress + '% done');
+                  switch (snapshot.state) {
+                    case firebase.storage.TaskState.PAUSED: // or 'paused'
+                      console.log('Upload is paused');
+                      break;
+                    case firebase.storage.TaskState.RUNNING: // or 'running'
+                      console.log('Upload is running');
+                      break;
+                  }
+             
+            }, function(error) {
+              // Handle unsuccessful uploads
+                  console.log("Error uploading file")
+                  docRef.delete().then(function() {
+                  console.log("Document successfully deleted!");
                   }).catch(function(error) {
                       console.error("Error removing document: ", error);
                   });
-                alert("Failed to add Deal");
-                return;
-              })
-  
-              
-             return docRef
-             
-            })  //// UPLOAD FUNCTION 
-            .then(function(docRef){
-  
-             
-              console.log("Deal added to database ");
-              //alert("Your deal was added!")
-      
-              var userId = firebase.auth().currentUser.uid
-      
-              //console.log(userId);
-      
-            
-              var storageRef = firebase.storage().ref("/"+userId+"/");
-              var file = document.querySelector('#dealPhoto').files[0];
-              var fileName  = file.name;
-      
-              
-      
-              var uploadTask = storageRef.child(fileName).put(file);
-      
-              uploadTask.on('state_changed', function(snapshot){
-                    // Observe state change events such as progress, pause, and resume
-                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload is ' + progress + '% done');
-                    switch (snapshot.state) {
-                      case firebase.storage.TaskState.PAUSED: // or 'paused'
-                        console.log('Upload is paused');
-                        break;
-                      case firebase.storage.TaskState.RUNNING: // or 'running'
-                        console.log('Upload is running');
-                        break;
-                    }
-               
-              }, function(error) {
-                // Handle unsuccessful uploads
-                    console.log("Error uploading file")
-                    docRef.delete().then(function() {
-                    console.log("Document successfully deleted!");
-                    }).catch(function(error) {
-                        console.error("Error removing document: ", error);
-                    });
-              }, function() {
-                // Handle successful uploads on complete
-                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                  uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                    
-                  console.log('File available at', downloadURL)
-                  console.log(fileName);
-      
-                  docRef.update({
-      
+            }, function() {
+              // Handle successful uploads on complete
+              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+
+                  console.log("Photo uploaded successfully")
+
+                  activeDeal.update({
                     dealPhoto : downloadURL,
-                    photoFilePath : docRef.id + "/" + fileName
-                         
-                  })
-                  
-                        .catch(function(error){
+                    photoFilePath : userId + "/" + fileName
+
+                  }).catch(function(error){
+                    console.log("Error updating dealPhoto and File Path")
+                    
+
+                  }).then(function(){
+                   
+                    activeDeal.get().then(function(doc){
+                      if(doc.exists){
+                        
+                        db.collection("deals").doc(doc.id).set({
+
+                          name : doc.get("name"),
+                          description : doc.get("description"),
+                          termsOfUse : doc.get("termsOfUse"),
+                          validFrom : doc.get("validFrom"),
+                          validTill : doc.get("validTill"),
+                          dealPhoto : doc.get("dealPhoto"),
+                          photoFilePath : doc.get("photoFilePath"),
+                          lastUpdated: doc.get("lastUpdated")
+                        
+                        }).catch(function(){
+                          console.log("Error updating dealDocument")
+
+                        }).then(function(){
+                          console.log ("The deal has been updated")
+                          alert("The deal has been updated successfully");
+                          document.location.reload();
+                        })
   
-                          //Deleting document
-                          console.log("Error updating document")
-                          docRef.delete().then(function() {
-                          console.log("Document successfully deleted!");
-  
-                          //delete the StorageFile if the document is not updated
-                          var deleteFilePath = userId + "/" + fileName;
-                          var storageDeleteRef = firebase.storage().ref(deleteFilePath);
-  
-                          storageDeleteRef.delete().then(function() {
-                  
-                            console.log("Deleting storage file success")
-                          }).catch(function(error) {
-                            console.log("error deleting storage file")
-                          });
-  
-                          //Error Deleting document
-                          }).catch(function(error) {
-                              console.error("Error removing document: ", error);
-                          });
-                
-                  });
-  
-                return docRef; 
-                }).then(function(docRef){
+
+                      }else {
+                        console.log("Could not find dealDocument")
+                      }
                       
-                   docRef.get().then(function(doc) {
-                      if (doc.exists){
-                           
-                     
-                            db.collection("deals").doc(doc.id).set({
-                            name: doc.get("name"),
-                            dealPhoto : doc.get("dealPhoto"),
-                            photoFilePath: doc.get("photoFilePath"),
-                            description : doc.get("description"),
-                            termsOfUse : doc.get("termsOfUse"),
-                            isFeatured : doc.get("isFeatured"),
-                            partnerID : doc.get("partnerID"),
-                            active : true,
-                            validFrom : doc.get("validFrom"),
-                            validTill : doc.get("validTill"),
-                            dealPhoto : doc.get("dealPhoto"),
-                            dealTimeStamp : doc.get("dealTimeStamp"),
-                            mainAd : false,
-                            
-                          })
-                        .catch(function(error) {
-                          console.log("Error writing document in deal collection:", error);
-                          console.log(docRef.id);
+                    })
+                  })
+
+                })
+              
+              })
+
+            
+          }).catch(function(error) {
+            console.log("Error when deleting file")
+          });
+
+
+        }else {
+         
+            activeDeal.get().then(function(doc){
+                      if(doc.exists){
+                        
+                        db.collection("deals").doc(doc.id).set({
+
+                          name : doc.get("name"),
+                          description : doc.get("description"),
+                          termsOfUse : doc.get("termsOfUse"),
+                          validFrom : doc.get("validFrom"),
+                          validTill : doc.get("validTill"),
+                          dealPhoto : doc.get("dealPhoto"),
+                          photoFilePath : doc.get("photoFilePath"),
+                          lastUpdated: doc.get("lastUpdated")
+                        
+                        }).catch(function(){
+                          console.log("Error updating dealDocument")
                           
                         }).then(function(){
-                          console.log("Deal added successfully")
-                          //alert("Your deal has been added!")
-                          $("#uploadingDealProgress").hide();
-                          //document.location.reload()
-                          
-                    
-                          });
-                              
-                      } else {
-                          // doc.data() will be undefined in this case
-                          console.log("No such document!");
+                          console.log ("The deal has been updated")
+                          alert("The deal has been updated successfully");
+                          document.location.reload();
+                        })
+  
+
+                      }else {
+                        console.log("Could not find dealDocument")
                       }
-                   }).catch(function(error) {
-                    console.log("Error getting document:", error);
-                    console.log(docRef.id);
-                   });
-  
-  
-  
-                 });
-                 
-                
-      
-              });
-      
-           })
-          }
-        })
-      } else {
-        console.log("Cancelled")
+                      
+                    })
+          
+        }
+
+      }else {
+        console.log("No such file")
       }
-    } else {
-      alert("Valid till must me after Valid from")
-    }
-  
-    } else {
-      $("#dealPhotoError").show().text("Required");
-      alert("Please make sure the all the required fields are filled")
-    }
-   
-  
+
+    //
     })
-    $("#downloadQRButton").click(function(){
-      
-      var canvas = document.getElementById("qr");
-      image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-      var link = document.createElement('a');
-      link.download = "my-image.png";
-      link.href = image;
-      link.click();
-  
-  
+    
+
+ })
+
+
+
+
+
+
+
+
+
+
+
+})
+
+$("#endButton").click(function(){
+  //dealId = $(event.target).parent().parent().parent().parent().attr('id');
+  console.log(true);
+})
+
+function readURL(input) {
+  if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function (e) {
+            $('#dealImage').attr('src', e.target.result);
+            $('#previewImage').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+  }
+}
+
+$("#dealPhoto").change(function(){
+  readURL(this);
+});
+
+
+
+$("#cancelButton").click(function(){
+
+
+        var dialog = document.querySelector("#editDealForm");
+
+        if (!dialog.showModal) 
+        {
+          dialogPolyfill.registerDialog(dialog);
+        }
+
+        document.getElementById("updateButton").disabled = true;
+        dialog.close();
+        
+})
+
+
+$("#editDealForm").on('input change', function() {
+  $('#updateButton').attr('disabled', false);
+});
+
+$("#gridDiv").click( function(event) {
+
+  userId = firebase.auth().currentUser.uid;
+
+  if(event.target.id == "endButton")
+  {
+    
+    dealId = $(event.target).parent().parent().parent().parent().attr('id');
+    
+    
+    var retVal = confirm("Are you sure you want to end this deal?");
+    
+        if(retVal == true){
+
+            // 1. Deactivating deal in Deals collection
+            var dealDocument = db.collection("deals").doc(dealId);
+            dealDocument.update({
+
+              active : false,
+              dealEndTimestamp : firebase.firestore.FieldValue.serverTimestamp() //Setting the ended time stamp
+
+            }).catch(function(error){
+              console.log("Deal update failed")
+            })
+            
+            .then(function(){ //Function 2: Add the deal to deal history
+
+                console.log("Deal deactivated")
+                //console.log(dealId)
+                //console.log(userId)
+                
+                //Adding DealId to deals history
+                db.collection("partners").doc(userId).collection("dealHistory").doc(dealId).set({})
+                .then(function(){
+
+                  console.log("DealId added to deal history")
+                  //console.log(typeof dealDocument)
+
+
+                }).catch(function(error){
+
+                      //Re Activate deal
+                      dealDocument.update({
+
+                        active : true,
+                        dealEndTimestamp : ""
+
+                      })
+                      .then(function(){
+
+                        console.log("Could not set deal in deal history, Deal has been reactivated");
+
+
+                      }).catch(function(error){
+
+                        console.log("Could not set deal in deal history, Deal couldnt be reactivated", error);
+
+                        alert("Could not end the deal, Please contact Ugly Deals to resolve this issue.");
+                      })
+
+                }).then(function(){ // Function 3 : Delete the activedeal Document
+                  
+                  //Delete document from activeDeals collection
+                  var activeDealDocument = db.collection("partners").doc(userId).collection("activeDeals").doc(dealId);
+                  activeDealDocument.delete()
+                  .then(function(){
+
+                    console.log("Active deal document has been deleted successfully!");
+                    alert("Deal has been Ended successfully");
+                    document.location.reload();
+
+
+                  }).catch(function(error){
+
+                        console.log("Active deal could not be deleted")
+                        
+                        //Re Activate deal
+                        dealDocument.update({
+
+                          active : true,
+                          dealEndTimestamp : ""
+
+                        })
+                        .then(function(){
+
+                          console.log("Could not set deal in deal history, Deal has been reactivated");
+                          
+                          //Delete the dealHistoty document
+                          var dealHistoryDocument = db.collection("partners").doc(userId).collection("dealHistory").doc(dealId);
+                          dealHistoryDocument.delete()
+                          .then(function(){
+
+                            console.log("dealHistory document has been deleted")
+                            alert("Deal could not be Ended!")
+
+                          }).catch(function(error){
+                            console.log("dealHistory document could not be deleted!")
+                            alert("Deal could not be ended. Please contact Ugly Deals to resolve this issue.")
+                          })
+
+                        }).catch(function(error){
+
+                          console.log("Could not set deal in deal history, Deal couldnt be reactivated", error);
+
+                          alert("Could not end the deal, Please contact Ugly Deals to resolve this issue.");
+
+                        })
+
+                  })
+
+
+                })
+                
+              
+            })
+     
+        } else {
+         //does not exist
+        }
+
+         
+
+  }
+                   
+})
+
+function deleteDealPhoto(dealId){
+  var desertRef = storageRef.child('images/desert.jpg');
+
+    // Delete the file
+    desertRef.delete().then(function() {
+      // File deleted successfully
+    }).catch(function(error) {
+      // Uh-oh, an error occurred!
     });
-  
-   
-  
-  
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
-  
-  
-  
-  
-  
-  
-  
-    
-  
-  
-  
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+

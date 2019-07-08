@@ -118,9 +118,14 @@ align-items: center;
   margin: auto;
   margin-top: 100px
 }
+
 #addDealForm{
 
  width: 1000px;
+ margin-left:auto;
+ margin-right:auto;
+ 
+ 
 }
 
 input[type=text] {
@@ -237,7 +242,29 @@ h5{
 }
 
 .content-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   -ms-transform: translateY(50%);
   transform: translateY(50%);
 }
+
+#editDealForm{
+  width: 1000px;
+  margin-left:auto;
+ margin-right:auto;
+  
+}
+
+#activeDealsTitle{
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  display: none;
+
+}
+
+#dealIdDiv{
+  margin-left: 30px;
+}
+
+
 

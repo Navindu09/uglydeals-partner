@@ -8,6 +8,8 @@
   <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-firestore.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
   </script defer src = "https://code.getmdl.io/1.2.1/material.min.js"></sript>
 
   <link rel="stylesheet" href="style.css" />
@@ -116,65 +118,90 @@
 
   
 
-    <div class="content-grid mdl-grid">
-
-      <div class="mdl-cell">
-        <div id="deal1" class="mdl-card mdl-shadow--2dp demo-card-square">
-          <img src="https://firebasestorage.googleapis.com/v0/b/ugly-deals.appspot.com/o/pexels-photo-461198.jpeg?alt=media&token=e03ccc71-f19e-483f-a639-1a11361f8402"></img>
-          <div class="mdl-card__title mdl-card--expand">
-              <h5>Free Cheeseburger</h5> 
-            </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <span>
-                <a class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect">
-                  Edit
-                </a>
-                <a class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect">
-                    End
-                  </a>
-              </span>
-            </div>
-       </div>
-      </div>
-      <div class="mdl-cell">
-        <div id="deal2" class="mdl-card mdl-shadow--2dp demo-card-square">
-          <img src="https://firebasestorage.googleapis.com/v0/b/ugly-deals.appspot.com/o/pexels-photo-461198.jpeg?alt=media&token=e03ccc71-f19e-483f-a639-1a11361f8402"></img>
-          <div class="mdl-card__title mdl-card--expand">
-              <h5>Free Cheeseburger</h5> 
-            </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <span>
-                <a class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect">
-                  Edit
-                </a>
-                <a class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect">
-                    End
-                  </a>
-              
-              </span>
-            </div>
-       </div>
-      </div>
-      <div class="mdl-cell">
-        <div id="deal3" class="mdl-card mdl-shadow--2dp demo-card-square">
-          <img src="https://firebasestorage.googleapis.com/v0/b/ugly-deals.appspot.com/o/pexels-photo-461198.jpeg?alt=media&token=e03ccc71-f19e-483f-a639-1a11361f8402"></img>
-          <div class="mdl-card__title mdl-card--expand">
-              <h5>Free Cheeseburger</h5> 
-            </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <span>
-                <a class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect">
-                  Edit
-              </a>
-              <a class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect">
-                   End
-              </a>
-            </span>
-          </div>
-       </div>
-      </div>
+    <div id="gridDiv" class="content-grid mdl-grid">
     </div>
+    <h4 id="activeDealsTitle">You have no active deals! Add one to get started!</h4>
 
+     <!--Add a deal Form-->
+  <dialog id="editDealForm" class="mdl-dialog">
+    <h4 id="loginDialogTitle" class="mdl-dialog__title"> Update Deal</h4>
+    <div class="mdl-dialog__content">
+      <form id = "addDeal">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"> 
+            <input class="mdl-textfield__input" required = "required" type="text" id="dealName" maxlength="25"> 
+            <label class="mdl-textfield__label" for="sample3">Deal Name</label>   
+        </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" required = "required" type="text" id="dealDescription" maxlength="50">
+              <label class="mdl-textfield__label" for="sample3">Description</label>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="dealTerms" maxlength="30">
+              <label class="mdl-textfield__label" for="sample3">Terms of use</label>
+          </div> 
+          <div id="validFromDiv">
+              <label for="sample3">Valid from</label>
+              <input  type="date" required = "required" id="dealValidFrom"> *
+
+              <label id="validTillLabel"  for="sample3">Valid till</label>
+              <input type="date" required = "required" id="dealValidTill"> *
+
+              <div id="dealIdDiv" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" disabled id= "dealId"  maxlength="30">
+                <label class="mdl-textfield__label" for="sample3" id="dealIdLabel" >Deal id</label>
+              </div>
+
+          </div> 
+
+          
+        
+
+
+          <script type="text/javascript">
+            jQuery(document).ready(function() {
+                jQuery('#dealValidFrom').datepicker({
+                    dateFormat : 'yy-mm-dd'
+                });
+            });
+
+            jQuery(document).ready(function() {
+                jQuery('#dealValidTill').datepicker({
+                    dateFormat : 'yy-mm-dd'
+                });
+            });
+            </script>
+          <div>
+            <span>
+              <input type="file" id="dealPhoto" required = "required" hidden="hidden" accept="image/png,image/jpeg">
+              <button id = "choosePhotoButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                Choose photo
+              </button>
+             <span id="photoText"></span>
+             <span><button id = "submitFileButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                Submit
+                   </button>
+             
+              <img id="dealImage" src=""  style="width:150px;height:150px;">
+              <p id="dealPhotoError"></p>
+             </span>
+            </span>
+            
+            
+            <!--<p id="loginError"></p>-->
+          </div>
+
+    <div class="mdl-dialog__actions">
+        <button id="updateButton" disabled class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Update
+        </button>
+        <button id="cancelButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--color">
+            Cancel
+        </button>
+        <div id="uploadingDealProgress"  class="mdl-spinner mdl-js-spinner is-active"></div>
+    </div>
+  </form>
+    </div>
+  </dialog>
   </div>
 
 
