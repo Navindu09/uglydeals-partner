@@ -369,7 +369,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     function(){
 
       $("#uploadingProgress").show();
-
+      $("#card :input").prop("disabled", true);
 
       var saveButton = document.getElementById('profileSaveButton'); 
       saveButton.disabled = true;

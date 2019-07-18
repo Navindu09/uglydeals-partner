@@ -11,6 +11,7 @@
   <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
   </script defer src = "https://code.getmdl.io/1.2.1/material.min.js"></sript>
+  <script src="QRious.js"></script>
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -116,13 +117,14 @@
         </nav>
     </div>
 
-  
-
+    <dialog id="greyScreen" class="mdl-dialog">
+      <div id="endingProgress" class="mdl-spinner mdl-js-spinner is-active"></div>
+    </dialog>
     <div id="gridDiv" class="content-grid mdl-grid">
     </div>
     <h4 id="activeDealsTitle">You have no active deals! Add one to get started!</h4>
 
-     <!--Add a deal Form-->
+     <!--UpdateDeal-->
   <dialog id="editDealForm" class="mdl-dialog">
     <h4 id="loginDialogTitle" class="mdl-dialog__title"> Update Deal</h4>
     <div class="mdl-dialog__content">
@@ -197,12 +199,24 @@
         <button id="cancelButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--color">
             Cancel
         </button>
+        <button id="generateQR" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--color">
+            QR Code
+        </button>
         <div id="uploadingDealProgress"  class="mdl-spinner mdl-js-spinner is-active"></div>
     </div>
   </form>
     </div>
   </dialog>
   </div>
+
+  <!--QR dialog-->
+
+  <dialog id="qrDialog" class="mdl-dialog">
+      <h4 id="qrTitle" class="mdl-dialog__title"> Download and Print the code to proceed. Click done to finish! </h4>
+      <canvas id="qr" ></canvas>
+      <button id="downloadQRButton"  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" >Download Code</button>
+      <button id="doneButton"  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" > Done</button>
+      </dialog>
 
 
     

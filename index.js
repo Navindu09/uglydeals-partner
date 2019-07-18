@@ -380,7 +380,10 @@ $("#dealPhoto").change(function(){
 });
 
 //////////////////////
-$("#addDealPreviewButton").click(function() {
+$("#addDealPreviewButton").click(function(ev) {
+
+  ev.preventDefault();
+
 
   var userId = firebase.auth().currentUser.uid;
   var dealIsFeatured = false;
@@ -635,7 +638,7 @@ $("#addDealProceedButton").click(function(ev) {
                                           var dialog = document.getElementById("addDealForm");
                                           dialog.close();
           
-                                        console.log(typeof docRef);
+                                       // console.log(typeof docRef);
                                         
                                           var dialog = document.querySelector('#qrDialog');
                                         

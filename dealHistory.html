@@ -112,6 +112,21 @@
           <a id="drawerLinkProfile" class="mdl-navigation__link" href="profile.html">Profile</a>
         </nav>
     </div>
+
+    <table id="dealHistoryTable">
+        <thead>
+          <tr id="Help">
+            <th>Deal Name</th>
+            <th>Total Redeems</th>
+            <th>Deal id</th>
+          </tr>
+        </thead>
+        <tbody id = "tableBody">
+          
+        </tbody>
+    </table>
+      
+    <h4 id="dealHistoryTitle"></h4>
   </div>
   
 
@@ -133,7 +148,7 @@
     firebase.initializeApp(firebaseConfig);
     var db = firebase.firestore();
   </script>
- <script src="index.js"></script>
+ <script src="dealHistory.js"></script>
 
 </body>
 </html>

@@ -278,6 +278,8 @@ firebase.auth().onAuthStateChanged(function(user) {
   );
   
   const grid = document.querySelector("#gridDiv");
+
+  
   ///////////////////////////
   function setUpData(){
       
@@ -402,10 +404,12 @@ function loadDealData(dealId){
 
   })
 
+   
 }
 
  $("#updateButton").click(function(){ 
 
+ $("#addDeal :input").prop("disabled", true);
  var userId = firebase.auth().currentUser.uid;
 
  document.getElementById("updateButton").disabled = true;
@@ -422,7 +426,7 @@ function loadDealData(dealId){
  var photo = $("#dealImage").attr("src");
   
  
- //Update the document with changes
+ //1: Update the document with changes
  var activeDeal = db.collection("partners").doc(userId).collection("activeDeals").doc(id1);
  activeDeal.update({
    name : name1,
@@ -441,7 +445,7 @@ function loadDealData(dealId){
     activeDeal.get().then(function(doc){
       if(doc.exists){
 
-        //Delete old photo
+        // 2: Delete old photo
         var activeDealPhoto = doc.get("dealPhoto")
 
         if(!(photo === activeDealPhoto)){
@@ -464,7 +468,7 @@ function loadDealData(dealId){
             
     
             var uploadTask = uploadFile.child(fileName).put(file);
-    
+            // 3 : Uploading new file
             uploadTask.on('state_changed', function(snapshot){
                   // Observe state change events such as progress, pause, and resume
                   // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -493,7 +497,7 @@ function loadDealData(dealId){
                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
 
                   console.log("Photo uploaded successfully")
-
+                  //Updating active deal with URL and File path
                   activeDeal.update({
                     dealPhoto : downloadURL,
                     photoFilePath : userId + "/" + fileName
@@ -504,10 +508,11 @@ function loadDealData(dealId){
 
                   }).then(function(){
                    
+                    // 4: Updating dealDocument
                     activeDeal.get().then(function(doc){
                       if(doc.exists){
                         
-                        db.collection("deals").doc(doc.id).set({
+                        db.collection("deals").doc(doc.id).update({
 
                           name : doc.get("name"),
                           description : doc.get("description"),
@@ -550,7 +555,7 @@ function loadDealData(dealId){
             activeDeal.get().then(function(doc){
                       if(doc.exists){
                         
-                        db.collection("deals").doc(doc.id).set({
+                        db.collection("deals").doc(doc.id).update({
 
                           name : doc.get("name"),
                           description : doc.get("description"),
@@ -601,10 +606,6 @@ function loadDealData(dealId){
 
 })
 
-$("#endButton").click(function(){
-  //dealId = $(event.target).parent().parent().parent().parent().attr('id');
-  console.log(true);
-})
 
 function readURL(input) {
   if (input.files && input.files[0]) {
@@ -624,8 +625,9 @@ $("#dealPhoto").change(function(){
 
 
 
-$("#cancelButton").click(function(){
+$("#cancelButton").click(function(ev){
 
+  ev.preventDefault();
 
         var dialog = document.querySelector("#editDealForm");
 
@@ -646,17 +648,28 @@ $("#editDealForm").on('input change', function() {
 
 $("#gridDiv").click( function(event) {
 
+ 
+
   userId = firebase.auth().currentUser.uid;
 
   if(event.target.id == "endButton")
   {
-    
+   
     dealId = $(event.target).parent().parent().parent().parent().attr('id');
     
     
     var retVal = confirm("Are you sure you want to end this deal?");
     
         if(retVal == true){
+
+            var dialog = document.querySelector('#greyScreen');
+                                          
+            if (!dialog.showModal) {
+              dialogPolyfill.registerDialog(dialog);
+              
+            }
+            dialog.showModal();
+        
 
             // 1. Deactivating deal in Deals collection
             var dealDocument = db.collection("deals").doc(dealId);
@@ -779,7 +792,56 @@ function deleteDealPhoto(dealId){
     }).catch(function(error) {
       // Uh-oh, an error occurred!
     });
+
+    
 }
+
+$("#generateQR").click(function(ev){
+  ev.preventDefault();
+
+  var id = $("#dealId").val();
+  //console.log(id)
+
+  var dialog = document.querySelector('#qrDialog');
+                                        
+  if (!dialog.showModal) {
+    dialogPolyfill.registerDialog(dialog);
+    
+  }
+  dialog.showModal();
+
+  var qr = new QRious({
+    
+          element: document.getElementById('qr'),
+          size : 300,
+          value: id
+    
+    }); 
+
+
+})
+
+$("#downloadQRButton").click(function(){
+    
+  var canvas = document.getElementById("qr");
+  image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+  var link = document.createElement('a');
+  link.download = "qrCode.png";
+  link.href = image;
+  link.click();
+  document.location.reload()
+
+
+});
+
+$("#doneButton").click(function(){
+  
+  
+  document.location.reload()
+
+
+});
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
