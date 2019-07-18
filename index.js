@@ -128,6 +128,7 @@ $("#signInButton").click(
 $("#signOutButton").click(
   function(){
     firebase.auth().signOut().then(function() {
+      window.location.reload();
   // Sign-out successful.
 }).catch(function(error) {
   alert(error.message)
@@ -713,6 +714,9 @@ $("#addDealProceedButton").click(function(ev) {
         }
       } else {
         alert("Valid till must me after Valid from")
+        $("#addDeal :input").prop("disabled", false);
+        ("#uploadingDealProgress").hide();
+        
       }
 
     } else {

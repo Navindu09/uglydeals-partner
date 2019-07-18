@@ -128,6 +128,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   $("#signOutButton").click(
     function(){
       firebase.auth().signOut().then(function() {
+        document.location.reload();
     // Sign-out successful.
   }).catch(function(error) {
     alert(error.message)

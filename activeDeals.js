@@ -129,6 +129,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     function(){
       firebase.auth().signOut().then(function() {
     // Sign-out successful.
+    document.location.reload();
   }).catch(function(error) {
     alert(error.message)
       });
