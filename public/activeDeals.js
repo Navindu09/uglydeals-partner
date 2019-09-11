@@ -368,6 +368,35 @@ firebase.auth().onAuthStateChanged(function(user) {
   
   })
 
+  function getNumberOfRedeems(dealId){
+
+    userId = firebase.auth().currentUser.uid;
+  
+  
+    var counter = 0;
+    
+  
+    db.collection("redeemedDeals").get()
+        .then(function(querySnapshot){
+          querySnapshot.forEach(function(doc) {
+          
+          var data = doc.data();
+          var docDealID = data.deal;
+  
+          console.log(docDealID);
+        
+          if (dealId == docDealID){
+              counter = counter + 1;
+          }
+        });
+      }).then(function(){
+        //console.log(counter);
+        $("#scanInput")[0].parentElement.MaterialTextfield.change(counter);
+      })
+    
+    
+  }
+
 function loadDealData(dealId){
 
   
