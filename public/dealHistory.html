@@ -134,8 +134,18 @@
   <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase.js"></script>
   
   <script>
+  //Debug Server
+  var firebaseConfig = {
+    apiKey: "AIzaSyCEcchRfOwOosl4V-weqoMZsLQKmqQQ8UM",
+    authDomain: "ugly-deals-debug.firebaseapp.com",
+    databaseURL: "https://ugly-deals-debug.firebaseio.com",
+    projectId: "ugly-deals-debug",
+    storageBucket: "gs://ugly-deals-debug.appspot.com/",
+    messagingSenderId: "424011521969",
+    appId: "1:424011521969:web:7b4b4c1028c81a792fe790"
+  };
     // Your web app's Firebase configuration
-    var firebaseConfig = {
+    /*var firebaseConfig = {
       apiKey: "AIzaSyAg8t7xdw2ID_HE0B7HxidOcmfSTH_CY5s",
       authDomain: "ugly-deals.firebaseapp.com",
       databaseURL: "https://ugly-deals.firebaseio.com",
@@ -143,7 +153,7 @@
       storageBucket: "ugly-deals.appspot.com",
       messagingSenderId: "738794256705",
       appId: "1:738794256705:web:bc7135859ff638b8"
-    };
+    };*/
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     var db = firebase.firestore();

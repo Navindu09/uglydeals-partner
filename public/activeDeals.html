@@ -133,27 +133,32 @@
             <input class="mdl-textfield__input" required = "required" type="text" id="dealName" maxlength="25"> 
             <label class="mdl-textfield__label" for="sample3">Deal Name</label>   
         </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" required = "required" type="text" id="dealDescription" maxlength="50">
-              <label class="mdl-textfield__label" for="sample3">Description</label>
-          </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="dealTerms" maxlength="30">
-              <label class="mdl-textfield__label" for="sample3">Terms of use</label>
-          </div> 
-          <div id="validFromDiv">
-              <label for="sample3">Valid from</label>
-              <input  type="date" required = "required" id="dealValidFrom"> *
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" required = "required" type="text" id="dealDescription" maxlength="50">
+            <label class="mdl-textfield__label" for="sample3">Description</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="dealTerms" maxlength="30">
+            <label class="mdl-textfield__label" for="sample3">Terms of use</label>
+       </div> 
+        <div id="validFromDiv">
+            <label for="sample3">Valid from</label>
+            <input  type="date" required = "required" id="dealValidFrom"> *
 
-              <label id="validTillLabel"  for="sample3">Valid till</label>
-              <input type="date" required = "required" id="dealValidTill"> *
+            <label id="validTillLabel"  for="sample3">Valid till</label>
+            <input type="date" required = "required" id="dealValidTill"> *
 
-              <div id="dealIdDiv" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <div id="dealIdDiv" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" disabled id= "dealId"  maxlength="30">
                 <label class="mdl-textfield__label" for="sample3" id="dealIdLabel" >Deal id</label>
-              </div>
+            </div>
 
-          </div> 
+            <div id="numberOfScans" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" disabled id= "scanInput"  maxlength="10">
+                <label class="mdl-textfield__label" for="sample3" id="deal" >Redeems</label>
+            </div>
+
+        </div> 
 
           
         
@@ -223,8 +228,18 @@
   <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase.js"></script>
   
   <script>
-    // Your web app's Firebase configuration
+    //Debug Server
     var firebaseConfig = {
+    apiKey: "AIzaSyCEcchRfOwOosl4V-weqoMZsLQKmqQQ8UM",
+    authDomain: "ugly-deals-debug.firebaseapp.com",
+    databaseURL: "https://ugly-deals-debug.firebaseio.com",
+    projectId: "ugly-deals-debug",
+    storageBucket: "gs://ugly-deals-debug.appspot.com/",
+    messagingSenderId: "424011521969",
+    appId: "1:424011521969:web:7b4b4c1028c81a792fe790"
+  };
+    // Your web app's Firebase configuration
+    /*var firebaseConfig = {
       apiKey: "AIzaSyAg8t7xdw2ID_HE0B7HxidOcmfSTH_CY5s",
       authDomain: "ugly-deals.firebaseapp.com",
       databaseURL: "https://ugly-deals.firebaseio.com",
@@ -232,7 +247,7 @@
       storageBucket: "ugly-deals.appspot.com",
       messagingSenderId: "738794256705",
       appId: "1:738794256705:web:bc7135859ff638b8"
-    };
+    };*/
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     var db = firebase.firestore();
