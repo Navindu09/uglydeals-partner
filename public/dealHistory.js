@@ -277,6 +277,30 @@ firebase.auth().onAuthStateChanged(function(user) {
   
     }
   );
+
+  async function getNumberOfRedeems(dealId){
+    return new Promise((resolve, reject) => {
+      userId = firebase.auth().currentUser.uid;
+      var counter = 0;
+      db.collection("redeemedDeals").get()
+          .then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+  
+            var data = doc.data();
+            var docDealID = data.deal;
+  
+            console.log(docDealID);
+  
+            if (dealId == docDealID){
+                counter = counter + 1;
+            }
+          });
+        }).then(() => {
+          //console.log(counter);
+          resolve(counter);
+        })
+     })
+    }
   
   const table = document.querySelector("#tableBody");
   ///////////////////////////
@@ -288,8 +312,6 @@ firebase.auth().onAuthStateChanged(function(user) {
     var user = firebase.auth().currentUser
     var userId = user.uid
 
-    
-    
     var userRef = db.collection('partners').doc(user.uid);
     return userRef
       .get()
@@ -299,55 +321,28 @@ firebase.auth().onAuthStateChanged(function(user) {
           userName = doc.get("name")
 
           $("#partnerName").show().text(userName);
-  
 
-       
-        }catch(error) {
-          console.error("Could not retrieve ", error);}
-        }
+          }catch(error) {
+            console.error("Could not retrieve ", error);}
+      }
 
         db.collection("partners").doc(userId).collection("dealHistory").get()
         .then(function(querySnapshot) {
-           
-           
-            
+
             querySnapshot.forEach(function(dealHistoryDocRef) {
-
-                
-
-                db.collection("deals").doc(dealHistoryDocRef.id).get().then(function(doc){
-                    table.innerHTML +=  "<td><a id="+doc.get("id")+">"+doc.get("name")+"</a></td><td>N/A</td><td>"+doc.get("id")+"</td>"
-                    
-
+                db.collection("deals").doc(dealHistoryDocRef.id)
+                .get()
+                .then(async doc => {
+                    var dealId = doc.id
+                    var number = await getNumberOfRedeems(dealId);
+                    console.log(number);
+                    table.innerHTML +=  "<td><a id="+doc.get("id")+">"+doc.get("name")+"</a> </td><td>" + number + "</td><td>"+doc.get("id")+"</td>"
+                                
                 })
-
-                /*db.collection("deals").doc(dealHistoryDoc.get("id")).get()
-                .then(function(doc){
-                    grid.innerHTML +="<div id="+ doc.data().id +"  class='mdl-cell'> <div class='mdl-card mdl-shadow--2dp demo-card-square'> <img src=' " + doc.data().dealPhoto + "'> </img><div class='mdl-card__title mdl-card--expand'> <h5>" + doc.data().name + "</h5> </div><div class='mdl-card__actions mdl-card--border'><span><a id = 'editButton' class='mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect'>Edit</a> <a id='endButton' class='mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect'> End</a></span></div></div></div>";
-
-                })
-                */
-            
              });
 
         });
-/*
-        const realFileButton = document.getElementById("dealPhoto");
-        const customButton = document.getElementById("choosePhotoButton");
-        const customText = document.getElementById("photoText");
-  
-        customButton.addEventListener("click",function(ev){
-          ev.preventDefault();
-          realFileButton.click();
-        });
-  
-        realFileButton.addEventListener("change", function(){
-           if(realFileButton.value){
-             customText.innerHTML = realFileButton.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
-           } else {
-             customText.innterHTML = "No file chosen yet";
-           }
-        });*/
+
  
   })}
 

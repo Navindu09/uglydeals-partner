@@ -437,6 +437,7 @@ function loadDealData(dealId){
    
 }
 
+
  $("#updateButton").click(function(){ 
 
  $("#addDeal :input").prop("disabled", true);
